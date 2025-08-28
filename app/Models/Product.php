@@ -7,6 +7,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -30,6 +31,7 @@ use Illuminate\Support\Str;
  */
 class Product extends Model
 {
+	use HasFactory;
 	protected $table = 'products';
 
 	protected $casts = [
@@ -40,14 +42,31 @@ class Product extends Model
 	protected $fillable = [
 		'name',
 		'price',
+		'old_price',
+		'discount_percentage',
 		'description',
+		'short_description',
 		'image',
 		'slug',
 		'sku',
 		'weight',
 		'dimensions',
-		'brand'
+		'brand',
+		'rating',
+		'review_count',
+		'stock_quantity',
+		'in_stock',
+		'is_featured',
+		'is_active',
+		'category_id',
+		'meta_title',
+		'meta_description'
 	];
+
+	public function category()
+	{
+		return $this->belongsTo(Category::class);
+	}
 
 	protected static function boot()
 	{
