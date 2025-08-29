@@ -73,6 +73,9 @@
                             <a class="dropdown-item" href="{{ url('/orders') }}">
                                 <i class="bi bi-bag-check me-2"></i>Mes Commandes
                             </a>
+                            <a class="dropdown-item" href="{{ url('/wishlist') }}">
+                                <i class="bi bi-heart me-2"></i>Mes Favories
+                            </a>
                             <a class="dropdown-item" href="{{ url('/settings') }}">
                                 <i class="bi bi-gear me-2"></i>Paramètres
                             </a>

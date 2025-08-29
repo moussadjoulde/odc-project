@@ -5,6 +5,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\WishListController;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -23,13 +24,17 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('products/{id}/export/csv', [ProductController::class, 'exportCSVWithId'])->name('products.exportCSVWithId');
 
     Route::prefix('admin')->group(function () {
-        Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+        Route::get('/products', [AdminController::class, 'productsIndex'])->name('admin.products.index');
     });
 
     //Order Management
     Route::resource('orders', OrderController::class);
     Route::get('orders/export/csv', [OrderController::class, 'exportCSV'])->name('orders.exportCSV');
     Route::get('orders/{id}/export/csv', [OrderController::class, 'exportCSVWithId'])->name('orders.exportCSVWithId');
+
+    // WishList
+    Route::get('/wishlist', [WishListController::class, 'index'])->name('wishlist.index');
 
 });
 

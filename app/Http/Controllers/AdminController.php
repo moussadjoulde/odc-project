@@ -13,4 +13,10 @@ class AdminController extends Controller
         $products = Product::latest()->get();
         return view('admin.dashboard', compact('products'));
     }
+
+    public function productsIndex()
+    {
+        $products = Product::latest()->get();
+        return view('products.index', compact('products'));
+    }
 }
