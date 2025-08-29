@@ -11,7 +11,7 @@ class WishListController extends Controller
 {
     public function index()
     {
-        $wishlists = Wishlist::whereId(Auth::id())->latest()->get();
+        $wishlists = Wishlist::where('user_id', Auth::id())->latest()->get();
         return view('wishlist.index', compact('wishlists'));
     }
 }
