@@ -5,7 +5,7 @@ namespace App\Livewire;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Cart;
-use App\Models\Wishlist; // Vous devrez créer ce modèle
+use App\Models\WishList; // Vous devrez créer ce modèle
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
@@ -28,7 +28,7 @@ class ProductFilter extends Component
     public $availableCategories = [];
 
     protected $paginationTheme = 'bootstrap';
-    public $wishlist = [];
+    public $WishList = [];
 
     // Propriétés à surveiller pour réinitialiser la pagination
     protected $updatesQueryString = [
@@ -92,9 +92,9 @@ class ProductFilter extends Component
     }
 
     /**
-     * Basculer un produit dans la wishlist
+     * Basculer un produit dans la WishList
      */
-    public function toggleWishlist($productId)
+    public function toggleWishList($productId)
     {
         if (!Auth::check()) {
             $this->dispatch('showToast', [
@@ -105,15 +105,15 @@ class ProductFilter extends Component
         }
 
         try {
-            $existingWishlist = Wishlist::where('user_id', Auth::id())
+            $existingWishList = WishList::where('user_id', Auth::id())
                 ->where('product_id', $productId)
                 ->first();
 
-            if ($existingWishlist) {
-                $existingWishlist->delete();
+            if ($existingWishList) {
+                $existingWishList->delete();
                 $message = 'Produit retiré des favoris.';
             } else {
-                Wishlist::create([
+                WishList::create([
                     'user_id' => Auth::id(),
                     'product_id' => $productId
                 ]);
@@ -133,15 +133,15 @@ class ProductFilter extends Component
     }
 
     /**
-     * Vérifier si un produit est dans la wishlist
+     * Vérifier si un produit est dans la WishList
      */
-    public function isInWishlist($productId)
+    public function isInWishList($productId)
     {
         if (!Auth::check()) {
             return false;
         }
 
-        return Wishlist::where('user_id', Auth::id())
+        return WishList::where('user_id', Auth::id())
             ->where('product_id', $productId)
             ->exists();
     }
