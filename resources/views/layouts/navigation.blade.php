@@ -15,7 +15,7 @@
             <!-- Menu principal -->
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/') }}">
+                    <a class="nav-link" href="{{ url('/home') }}">
                         <i class="bi bi-house me-1"></i>Accueil
                     </a>
                 </li>
