@@ -33,14 +33,19 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('orders', OrderController::class);
     Route::get('orders/export/csv', [OrderController::class, 'exportCSV'])->name('orders.exportCSV');
     Route::get('orders/{id}/export/csv', [OrderController::class, 'exportCSVWithId'])->name('orders.exportCSVWithId');
-
-    // Profile
-    Route::name('profile.')->group(function () {
-        Route::get('/profile', [ProfileController::class, 'index'])->name('index');
-    });
+    
 });
 
 Auth::routes();
+
+Route::middleware(['auth'])->group(
+    function () {
+        // Profile
+        Route::name('profile.')->group(function () {
+            Route::get('/profile', [ProfileController::class, 'index'])->name('index');
+        });
+    }
+);
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/shop', [HomeController::class, 'shop'])->name('shop');
