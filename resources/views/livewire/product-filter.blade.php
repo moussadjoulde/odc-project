@@ -10,15 +10,15 @@
                 <!-- Catégories - CORRECTION ICI -->
                 <div class="mb-4">
                     <h6 class="fw-semibold mb-3">Catégories</h6>
-                    <button class="category-btn {{ $category === 'all' ? 'active' : '' }}" 
-                            wire:click="setCategory('all')">
+                    <button class="category-btn {{ $category === 'all' ? 'active' : '' }}"
+                        wire:click="setCategory('all')">
                         <i class="bi bi-grid me-2"></i>Tous les produits
                     </button>
-                    @foreach($availableCategories as $cat)
-                    <button class="category-btn {{ $category == $cat['id'] ? 'active' : '' }}"
+                    @foreach ($availableCategories as $cat)
+                        <button class="category-btn {{ $category == $cat['id'] ? 'active' : '' }}"
                             wire:click="setCategory({{ $cat['id'] }})">
-                        <i class="bi bi-laptop me-2"></i>{{ $cat['name'] }}
-                    </button>
+                            <i class="bi bi-laptop me-2"></i>{{ $cat['name'] }}
+                        </button>
                     @endforeach
                 </div>
 
@@ -43,50 +43,49 @@
                 </div>
 
                 <!-- Marques -->
-                @if(!empty($availableBrands))
-                <div class="mb-4">
-                    <h6 class="fw-semibold mb-3">Marques populaires</h6>
-                    @foreach($availableBrands as $brand)
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" 
-                               id="brand_{{ $loop->index }}"
-                               wire:click="toggleBrand('{{ $brand }}')"
-                               {{ in_array($brand, $brands) ? 'checked' : '' }}>
-                        <label class="form-check-label" for="brand_{{ $loop->index }}">
-                            {{ $brand }}
-                        </label>
+                @if (!empty($availableBrands))
+                    <div class="mb-4">
+                        <h6 class="fw-semibold mb-3">Marques populaires</h6>
+                        @foreach ($availableBrands as $brand)
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="brand_{{ $loop->index }}"
+                                    wire:click="toggleBrand('{{ $brand }}')"
+                                    {{ in_array($brand, $brands) ? 'checked' : '' }}>
+                                <label class="form-check-label" for="brand_{{ $loop->index }}">
+                                    {{ $brand }}
+                                </label>
+                            </div>
+                        @endforeach
                     </div>
-                    @endforeach
-                </div>
                 @endif
 
                 <!-- Note moyenne -->
                 <div class="mb-4">
                     <h6 class="fw-semibold mb-3">Note minimum</h6>
                     <div class="form-check mb-2">
-                        <input class="form-check-input" type="radio" name="rating" 
-                               id="rating5" value="5" wire:model="rating">
+                        <input class="form-check-input" type="radio" name="rating" id="rating5" value="5"
+                            wire:model="rating">
                         <label class="form-check-label" for="rating5">
                             <span class="stars">★★★★★</span> 5 étoiles
                         </label>
                     </div>
                     <div class="form-check mb-2">
-                        <input class="form-check-input" type="radio" name="rating" 
-                               id="rating4" value="4" wire:model="rating">
+                        <input class="form-check-input" type="radio" name="rating" id="rating4" value="4"
+                            wire:model="rating">
                         <label class="form-check-label" for="rating4">
                             <span class="stars">★★★★☆</span> 4 étoiles et plus
                         </label>
                     </div>
                     <div class="form-check mb-2">
-                        <input class="form-check-input" type="radio" name="rating" 
-                               id="rating3" value="3" wire:model="rating">
+                        <input class="form-check-input" type="radio" name="rating" id="rating3" value="3"
+                            wire:model="rating">
                         <label class="form-check-label" for="rating3">
                             <span class="stars">★★★☆☆</span> 3 étoiles et plus
                         </label>
                     </div>
                     <div class="form-check mb-2">
-                        <input class="form-check-input" type="radio" name="rating" 
-                               id="rating0" value="" wire:model="rating">
+                        <input class="form-check-input" type="radio" name="rating" id="rating0" value=""
+                            wire:model="rating">
                         <label class="form-check-label" for="rating0">
                             Toutes les notes
                         </label>
@@ -122,31 +121,50 @@
                                 <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-sort-down me-2"></i>
                                     @switch($sortBy)
-                                        @case('price_asc') Prix croissant @break
-                                        @case('price_desc') Prix décroissant @break
-                                        @case('rating') Mieux notés @break
-                                        @case('popular') Plus populaires @break
-                                        @default Plus récent @break
+                                        @case('price_asc')
+                                            Prix croissant
+                                        @break
+
+                                        @case('price_desc')
+                                            Prix décroissant
+                                        @break
+
+                                        @case('rating')
+                                            Mieux notés
+                                        @break
+
+                                        @case('popular')
+                                            Plus populaires
+                                        @break
+
+                                        @default
+                                            Plus récent
+                                        @break
                                     @endswitch
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#" wire:click.prevent="setSortBy('newest')">Plus récent</a></li>
-                                    <li><a class="dropdown-item" href="#" wire:click.prevent="setSortBy('price_asc')">Prix croissant</a></li>
-                                    <li><a class="dropdown-item" href="#" wire:click.prevent="setSortBy('price_desc')">Prix décroissant</a></li>
-                                    <li><a class="dropdown-item" href="#" wire:click.prevent="setSortBy('rating')">Mieux notés</a></li>
-                                    <li><a class="dropdown-item" href="#" wire:click.prevent="setSortBy('popular')">Plus populaires</a></li>
+                                    <li><a class="dropdown-item" href="#"
+                                            wire:click.prevent="setSortBy('newest')">Plus récent</a></li>
+                                    <li><a class="dropdown-item" href="#"
+                                            wire:click.prevent="setSortBy('price_asc')">Prix croissant</a></li>
+                                    <li><a class="dropdown-item" href="#"
+                                            wire:click.prevent="setSortBy('price_desc')">Prix décroissant</a></li>
+                                    <li><a class="dropdown-item" href="#"
+                                            wire:click.prevent="setSortBy('rating')">Mieux notés</a></li>
+                                    <li><a class="dropdown-item" href="#"
+                                            wire:click.prevent="setSortBy('popular')">Plus populaires</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="btn-group" role="group">
-                            <button type="button" 
-                                    class="btn btn-outline-secondary {{ $viewType === 'grid' ? 'active' : '' }}"
-                                    wire:click="setViewType('grid')">
+                            <button type="button"
+                                class="btn btn-outline-secondary {{ $viewType === 'grid' ? 'active' : '' }}"
+                                wire:click="setViewType('grid')">
                                 <i class="bi bi-grid"></i>
                             </button>
-                            <button type="button" 
-                                    class="btn btn-outline-secondary {{ $viewType === 'list' ? 'active' : '' }}"
-                                    wire:click="setViewType('list')">
+                            <button type="button"
+                                class="btn btn-outline-secondary {{ $viewType === 'list' ? 'active' : '' }}"
+                                wire:click="setViewType('list')">
                                 <i class="bi bi-list"></i>
                             </button>
                         </div>
@@ -168,8 +186,11 @@
                                         <div class="product-badge">Nouveau</div>
                                     @endif
 
-                                    <button class="wishlist-btn" wire:click="toggleWishlist({{ $product->id }})">
-                                        <i class="bi bi-heart"></i>
+                                    <button
+                                        class="wishlist-btn {{ $this->isInWishList($product->id) ? 'active' : '' }}"
+                                        wire:click="toggleWishList({{ $product->id }})">
+                                        <i
+                                            class="bi bi-heart{{ $this->isInWishList($product->id) ? '-fill' : '' }}"></i>
                                     </button>
 
                                     <div class="product-overlay">
@@ -185,25 +206,35 @@
                                     @else
                                         <div class="position-absolute top-50 start-50 translate-middle">
                                             @if (str_contains(strtolower($product->name), 'phone') || str_contains(strtolower($product->name), 'iphone'))
-                                                <i class="bi bi-phone text-primary" style="font-size: 4rem; opacity: 0.3;"></i>
+                                                <i class="bi bi-phone text-primary"
+                                                    style="font-size: 4rem; opacity: 0.3;"></i>
                                             @elseif(str_contains(strtolower($product->name), 'laptop') || str_contains(strtolower($product->name), 'macbook'))
-                                                <i class="bi bi-laptop text-primary" style="font-size: 4rem; opacity: 0.3;"></i>
+                                                <i class="bi bi-laptop text-primary"
+                                                    style="font-size: 4rem; opacity: 0.3;"></i>
                                             @elseif(str_contains(strtolower($product->name), 'tablet') || str_contains(strtolower($product->name), 'ipad'))
-                                                <i class="bi bi-tablet text-primary" style="font-size: 4rem; opacity: 0.3;"></i>
+                                                <i class="bi bi-tablet text-primary"
+                                                    style="font-size: 4rem; opacity: 0.3;"></i>
                                             @elseif(str_contains(strtolower($product->name), 'watch'))
-                                                <i class="bi bi-smartwatch text-primary" style="font-size: 4rem; opacity: 0.3;"></i>
+                                                <i class="bi bi-smartwatch text-primary"
+                                                    style="font-size: 4rem; opacity: 0.3;"></i>
                                             @elseif(str_contains(strtolower($product->name), 'headphone') || str_contains(strtolower($product->name), 'airpod'))
-                                                <i class="bi bi-headphones text-primary" style="font-size: 4rem; opacity: 0.3;"></i>
+                                                <i class="bi bi-headphones text-primary"
+                                                    style="font-size: 4rem; opacity: 0.3;"></i>
                                             @elseif(str_contains(strtolower($product->name), 'camera'))
-                                                <i class="bi bi-camera text-primary" style="font-size: 4rem; opacity: 0.3;"></i>
+                                                <i class="bi bi-camera text-primary"
+                                                    style="font-size: 4rem; opacity: 0.3;"></i>
                                             @elseif(str_contains(strtolower($product->name), 'game') || str_contains(strtolower($product->name), 'playstation'))
-                                                <i class="bi bi-controller text-primary" style="font-size: 4rem; opacity: 0.3;"></i>
+                                                <i class="bi bi-controller text-primary"
+                                                    style="font-size: 4rem; opacity: 0.3;"></i>
                                             @elseif(str_contains(strtolower($product->name), 'speaker') || str_contains(strtolower($product->name), 'homepod'))
-                                                <i class="bi bi-speaker text-primary" style="font-size: 4rem; opacity: 0.3;"></i>
+                                                <i class="bi bi-speaker text-primary"
+                                                    style="font-size: 4rem; opacity: 0.3;"></i>
                                             @elseif(str_contains(strtolower($product->name), 'keyboard'))
-                                                <i class="bi bi-keyboard text-primary" style="font-size: 4rem; opacity: 0.3;"></i>
+                                                <i class="bi bi-keyboard text-primary"
+                                                    style="font-size: 4rem; opacity: 0.3;"></i>
                                             @else
-                                                <i class="bi bi-box text-primary" style="font-size: 4rem; opacity: 0.3;"></i>
+                                                <i class="bi bi-box text-primary"
+                                                    style="font-size: 4rem; opacity: 0.3;"></i>
                                             @endif
                                         </div>
                                     @endif
@@ -230,11 +261,13 @@
                                     <div class="product-price">
                                         {{ number_format($product->price, 2, ',', ' ') }} €
                                         @if ($product->old_price)
-                                            <span class="old-price">{{ number_format($product->old_price, 2, ',', ' ') }} €</span>
+                                            <span
+                                                class="old-price">{{ number_format($product->old_price, 2, ',', ' ') }}
+                                                €</span>
                                         @endif
                                     </div>
 
-                                    <button class="btn-add-cart" wire:click="addToCart({{ $product->id}}, 1)">
+                                    <button class="btn-add-cart" wire:click="addToCart({{ $product->id }}, 1)">
                                         <i class="bi bi-cart-plus me-2"></i>Ajouter au panier
                                     </button>
                                 </div>

@@ -275,6 +275,37 @@
             transform: scale(1.1);
         }
 
+        .wishlist-btn.active i,
+        .wishlist-btn:hover i {
+            color: #dc3545;
+        }
+
+        .wishlist-btn.active i {
+            animation: heartBeat 0.6s ease-in-out;
+        }
+
+        @keyframes heartBeat {
+            0% {
+                transform: scale(1);
+            }
+
+            14% {
+                transform: scale(1.3);
+            }
+
+            28% {
+                transform: scale(1);
+            }
+
+            42% {
+                transform: scale(1.3);
+            }
+
+            70% {
+                transform: scale(1);
+            }
+        }
+
         @media (max-width: 768px) {
             .filter-card {
                 position: relative;

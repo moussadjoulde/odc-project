@@ -5,7 +5,7 @@ namespace App\Livewire;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Cart;
-use App\Models\WishList; // Vous devrez créer ce modèle
+use App\Models\WishList;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
@@ -28,7 +28,9 @@ class ProductFilter extends Component
     public $availableCategories = [];
 
     protected $paginationTheme = 'bootstrap';
-    public $WishList = [];
+
+    // CORRECTION : Propriété pour stocker les favoris
+    public $userWishList = [];
 
     // Propriétés à surveiller pour réinitialiser la pagination
     protected $updatesQueryString = [
@@ -57,13 +59,29 @@ class ProductFilter extends Component
             ->orderBy('name')
             ->get(['id', 'name'])
             ->toArray();
-            
 
         // Définir les prix min et max basés sur les produits existants
         $priceRange = Product::selectRaw('MIN(price) as min_price, MAX(price) as max_price')->first();
         if ($priceRange) {
             $this->minPrice = floor($priceRange->min_price ?? 0);
             $this->maxPrice = ceil($priceRange->max_price ?? 1000);
+        }
+
+        // AJOUT : Initialiser la wishlist de l'utilisateur
+        $this->loadUserWishList();
+    }
+
+    /**
+     * AJOUT : Charger la wishlist de l'utilisateur
+     */
+    private function loadUserWishList()
+    {
+        if (Auth::check()) {
+            $this->userWishList = WishList::where('user_id', Auth::id())
+                ->pluck('product_id')
+                ->toArray();
+        } else {
+            $this->userWishList = [];
         }
     }
 
@@ -92,7 +110,7 @@ class ProductFilter extends Component
     }
 
     /**
-     * Basculer un produit dans la WishList
+     * CORRECTION : Nom de méthode cohérent
      */
     public function toggleWishList($productId)
     {
@@ -111,12 +129,18 @@ class ProductFilter extends Component
 
             if ($existingWishList) {
                 $existingWishList->delete();
+                // AJOUT : Retirer de la liste locale
+                $this->userWishList = array_values(array_filter($this->userWishList, function ($id) use ($productId) {
+                    return $id != $productId;
+                }));
                 $message = 'Produit retiré des favoris.';
             } else {
                 WishList::create([
                     'user_id' => Auth::id(),
                     'product_id' => $productId
                 ]);
+                // AJOUT : Ajouter à la liste locale
+                $this->userWishList[] = $productId;
                 $message = 'Produit ajouté aux favoris !';
             }
 
@@ -133,18 +157,14 @@ class ProductFilter extends Component
     }
 
     /**
-     * Vérifier si un produit est dans la WishList
+     * MODIFICATION : Vérifier si un produit est dans la WishList (version optimisée)
      */
     public function isInWishList($productId)
     {
-        if (!Auth::check()) {
-            return false;
-        }
-
-        return WishList::where('user_id', Auth::id())
-            ->where('product_id', $productId)
-            ->exists();
+        return in_array($productId, $this->userWishList);
     }
+
+    // ... (le reste des méthodes reste identique)
 
     /**
      * Définir la catégorie de filtrage
@@ -299,7 +319,7 @@ class ProductFilter extends Component
         return $query->paginate(12);
     }
 
-    // Méthodes de cycle de vie Livewire existantes...
+    // Méthodes de cycle de vie Livewire
     public function updatedCategory()
     {
         $this->resetPage();
@@ -388,4 +408,3 @@ class ProductFilter extends Component
         ]);
     }
 }
- 
