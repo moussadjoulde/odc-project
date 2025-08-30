@@ -43,7 +43,7 @@
                             <a href="{{ url('/shop') }}" class="btn btn-modern btn-lg">
                                 <i class="bi bi-shop me-2"></i>Découvrir nos produits
                             </a>
-                            <a href="{{ url('/') }}" class="btn btn-outline-primary btn-lg">
+                            <a href="{{ url('/home') }}" class="btn btn-outline-primary btn-lg">
                                 <i class="bi bi-house me-2"></i>Retour à l'accueil
                             </a>
                         </div>

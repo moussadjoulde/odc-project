@@ -157,4 +157,6 @@ return [
     */
 
     'pagination_theme' => 'tailwind',
+
+    'app_url' => 'https://soden.odclaravel.tech/public',
 ];

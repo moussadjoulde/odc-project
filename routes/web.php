@@ -32,10 +32,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('orders', OrderController::class);
     Route::get('orders/export/csv', [OrderController::class, 'exportCSV'])->name('orders.exportCSV');
     Route::get('orders/{id}/export/csv', [OrderController::class, 'exportCSVWithId'])->name('orders.exportCSVWithId');
-
-    // WishList
-    Route::get('/wishlist', [WishListController::class, 'index'])->name('wishlist.index');
-
 });
 
 Auth::routes();
@@ -45,3 +41,6 @@ Route::get('/shop', [HomeController::class, 'shop'])->name('shop');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+
+// WishList
+Route::get('/wishlist', [WishListController::class, 'index'])->name('wishlist.index');

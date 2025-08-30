@@ -2,7 +2,7 @@ APP_NAME="SÖDEN"
 APP_ENV=production
 APP_KEY=
 APP_DEBUG=false
-APP_URL=https://soden.odclaravel.tech
+APP_URL=https://soden.odclaravel.tech/public
 
 APP_LOCALE=en
 APP_FALLBACK_LOCALE=en

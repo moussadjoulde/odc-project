@@ -9,6 +9,8 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 /**
@@ -36,7 +38,15 @@ class Product extends Model
 
 	protected $casts = [
 		'price' => 'float',
-		'weight' => 'float'
+		'old_price' => 'float',
+		'discount_percentage' => 'float',
+		'weight' => 'float',
+		'rating' => 'float',
+		'review_count' => 'integer',
+		'stock_quantity' => 'integer',
+		'in_stock' => 'boolean',
+		'is_featured' => 'boolean',
+		'is_active' => 'boolean',
 	];
 
 	protected $fillable = [
@@ -63,9 +73,118 @@ class Product extends Model
 		'meta_description'
 	];
 
-	public function category()
+	// Relations existantes
+	public function category(): BelongsTo
 	{
 		return $this->belongsTo(Category::class);
+	}
+
+	// Nouvelles relations pour les commandes
+	public function orderItems(): HasMany
+	{
+		return $this->hasMany(OrderItem::class);
+	}
+
+	public function orders()
+	{
+		return $this->belongsToMany(Order::class, 'order_items')
+			->withPivot('quantity', 'unit_price', 'total_price', 'product_name', 'product_sku')
+			->withTimestamps();
+	}
+
+	// Méthodes utiles pour les commandes
+	public function getTotalSoldAttribute(): int
+	{
+		return $this->orderItems()
+			->whereHas('order', function ($query) {
+				$query->whereIn('status', ['confirmed', 'processing', 'shipped', 'delivered']);
+			})
+			->sum('quantity');
+	}
+
+	public function getRevenueAttribute(): float
+	{
+		return $this->orderItems()
+			->whereHas('order', function ($query) {
+				$query->whereIn('status', ['confirmed', 'processing', 'shipped', 'delivered'])
+					->where('payment_status', 'paid');
+			})
+			->sum('total_price');
+	}
+
+	// Vérifier si le produit est en stock suffisant pour une quantité donnée
+	public function hasStock(int $quantity = 1): bool
+	{
+		return $this->in_stock && $this->stock_quantity >= $quantity;
+	}
+
+	// Réduire le stock (après confirmation de commande)
+	public function decreaseStock(int $quantity): bool
+	{
+		if ($this->hasStock($quantity)) {
+			$this->decrement('stock_quantity', $quantity);
+
+			// Mettre à jour le statut in_stock si nécessaire
+			if ($this->stock_quantity <= 0) {
+				$this->update(['in_stock' => false]);
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	// Augmenter le stock (en cas d'annulation/retour)
+	public function increaseStock(int $quantity): void
+	{
+		$this->increment('stock_quantity', $quantity);
+
+		// Remettre en stock si ce n'était pas le cas
+		if (!$this->in_stock && $this->stock_quantity > 0) {
+			$this->update(['in_stock' => true]);
+		}
+	}
+
+	// Getter pour le prix avec remise
+	public function getDiscountPriceAttribute(): ?float
+	{
+		if ($this->old_price && $this->old_price > $this->price) {
+			return $this->price;
+		}
+
+		return null;
+	}
+
+	// Getter pour le pourcentage de remise calculé
+	public function getCalculatedDiscountPercentageAttribute(): ?int
+	{
+		if ($this->old_price && $this->old_price > $this->price) {
+			return round((($this->old_price - $this->price) / $this->old_price) * 100);
+		}
+
+		return null;
+	}
+
+	// Scopes pour les requêtes courantes
+	public function scopeInStock($query)
+	{
+		return $query->where('in_stock', true)->where('stock_quantity', '>', 0);
+	}
+
+	public function scopeFeatured($query)
+	{
+		return $query->where('is_featured', true);
+	}
+
+	public function scopeActive($query)
+	{
+		return $query->where('is_active', true);
+	}
+
+	public function scopeOnSale($query)
+	{
+		return $query->whereNotNull('old_price')->whereColumn('price', '<', 'old_price');
 	}
 
 	protected static function boot()
