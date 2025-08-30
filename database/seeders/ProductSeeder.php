@@ -15,11 +15,11 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         // Créer d'abord les catégories
-        $categories = Category::factory()->count(20)->create();
+        $categories = Category::factory()->count(8)->create();
 
         // Créer des produits avec des catégories aléatoires
         Product::factory()
-            ->count(200)
+            ->count(40)
             ->create([
                 'category_id' => function () use ($categories) {
                     return rand(0, 100) > 10 

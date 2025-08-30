@@ -67,7 +67,7 @@
                         </a>
 
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{{ url('/profile') }}">
+                            <a class="dropdown-item" href="{{ route('profile.index') }}">
                                 <i class="bi bi-person-circle me-2"></i>Mon Profil
                             </a>
                             <a class="dropdown-item" href="{{ url('/orders') }}">

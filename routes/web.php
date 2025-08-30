@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
@@ -32,6 +33,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('orders', OrderController::class);
     Route::get('orders/export/csv', [OrderController::class, 'exportCSV'])->name('orders.exportCSV');
     Route::get('orders/{id}/export/csv', [OrderController::class, 'exportCSVWithId'])->name('orders.exportCSVWithId');
+
+    // Profile
+    Route::name('profile.')->group(function () {
+        Route::get('/profile', [ProfileController::class, 'index'])->name('index');
+    });
 });
 
 Auth::routes();
