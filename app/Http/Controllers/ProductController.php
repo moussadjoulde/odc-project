@@ -8,6 +8,7 @@ use App\Http\Requests\Product\ProductUpdateRequest;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 
 class ProductController extends Controller
@@ -41,6 +42,35 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
 
+    public function storeReview(Request $request, Product $product)
+    {
+        $validated = $request->validate([
+            'rating' => 'required|integer|between:1,5',
+            'title' => 'required|string|max:255',
+            'comment' => 'required|string|min:10',
+        ]);
+
+        // Vérifier si l'utilisateur a déjà noté ce produit
+        if ($product->reviews()->where('user_id', Auth::id())->exists()) {
+            return back()->with('error', 'Vous avez déjà noté ce produit.');
+        }
+
+        // Créer l'avis en ajoutant explicitement le product_id
+        $review = $product->reviews()->create([
+            'product_id' => $product->id, // Ajout explicite
+            'user_id' => Auth::id(),
+            'rating' => $validated['rating'],
+            'title' => $validated['title'],
+            'comment' => $validated['comment'],
+            'approved' => true,
+        ]);
+
+        // Mettre à jour la note moyenne du produit
+        $product->updateRating();
+
+        return back()->with('success', 'Votre avis a été publié avec succès.');
+    }
+
     /**
      * Display the specified resource.
      */
@@ -48,6 +78,12 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
         return view('products.show', compact('product'));
+    }
+
+    public function showDetails(string $id)
+    {
+        $product = Product::findOrFail($id);
+        return view('product-show', compact('product'));
     }
 
     /**
@@ -76,6 +112,46 @@ class ProductController extends Controller
     {
         Product::destroy($id);
         return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
+    }
+    
+    public function loadMoreReviews(Request $request, Product $product)
+    {
+        $offset = $request->get('offset', 0);
+
+        $reviews = $product->reviews()
+            ->with('user')
+            ->where('approved', true)
+            ->orderBy('created_at', 'desc')
+            ->skip($offset)
+            ->take(5)
+            ->get();
+
+        $html = '';
+        foreach ($reviews as $review) {
+            $stars = '';
+            for ($i = 1; $i <= 5; $i++) {
+                $stars .= '<i class="bi bi-star' . ($i <= $review->rating ? '-fill' : '') . ' text-warning"></i>';
+            }
+
+            $html .= '
+        <div class="review-item floating-card p-4 mb-3">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                    <h6 class="fw-600 mb-1">' . ($review->user->name ?? 'Utilisateur anonyme') . '</h6>
+                    <div class="rating small">' . $stars . '</div>
+                </div>
+                <small class="text-muted">' . $review->created_at->format('d/m/Y') . '</small>
+            </div>
+            <h6 class="fw-600 text-primary mb-2">' . htmlspecialchars($review->title) . '</h6>
+            <p class="mb-0">' . htmlspecialchars($review->comment) . '</p>
+        </div>';
+        }
+
+        return response()->json([
+            'success' => true,
+            'reviews' => $reviews->toArray(),
+            'html' => $html
+        ]);
     }
 
     public function exportCSV()

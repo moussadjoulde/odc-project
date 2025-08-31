@@ -92,6 +92,23 @@ class Product extends Model
 			->withTimestamps();
 	}
 
+	public function reviews()
+	{
+		return $this->hasMany(Review::class, 'product_id');
+	}
+
+	public function approvedReviews()
+	{
+		return $this->reviews()->where('approved', true)->orderBy('created_at', 'desc');
+	}
+
+	public function updateRating()
+	{
+		$this->rating = $this->reviews()->avg('rating') ?? 0;
+		$this->review_count = $this->reviews()->count();
+		$this->save();
+	}
+
 	// Méthodes utiles pour les commandes
 	public function getTotalSoldAttribute(): int
 	{

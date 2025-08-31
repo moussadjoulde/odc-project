@@ -201,8 +201,8 @@
 
                                     <!-- Image du produit -->
                                     @if ($product->image)
-                                        <img src="{{ $product->image }}" alt="{{ $product->name }}"
-                                            class="img-fluid product-main-image">
+                                        <img src="{{ asset('storage/' . $product->image) }}"
+                                            alt="{{ $product->name }}" class="img-fluid product-main-image">
                                     @else
                                         <div class="position-absolute top-50 start-50 translate-middle">
                                             @if (str_contains(strtolower($product->name), 'phone') || str_contains(strtolower($product->name), 'iphone'))
@@ -259,17 +259,27 @@
                                     </div>
 
                                     <div class="product-price">
-                                        {{ number_format($product->price, 2, ',', ' ') }} €
+                                        {{ number_format($product->price, 0, ',', ' ') }} GNF
                                         @if ($product->old_price)
                                             <span
-                                                class="old-price">{{ number_format($product->old_price, 2, ',', ' ') }}
-                                                €</span>
+                                                class="old-price">{{ number_format($product->old_price, 0, ',', ' ') }}
+                                            </span>
                                         @endif
                                     </div>
 
-                                    <button class="btn-add-cart" wire:click="addToCart({{ $product->id }}, 1)">
-                                        <i class="bi bi-cart-plus me-2"></i>Ajouter au panier
-                                    </button>
+                                    <!-- Boutons d'action -->
+                                    <div class="product-actions">
+                                        <button class="btn-add-cart" wire:click="addToCart({{ $product->id }}, 1)">
+                                            <i class="bi bi-cart-plus me-2"></i>Ajouter au panier
+                                        </button>
+                                        
+                                        <!-- Nouveau bouton "Voir plus" stylisé -->
+                                        <a href="{{ route('product.show', $product->id) }}" class="btn-view-more mt-2">
+                                            <span class="btn-view-more-text">
+                                                <i class="bi bi-arrow-right me-2"></i>Voir plus
+                                            </span>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

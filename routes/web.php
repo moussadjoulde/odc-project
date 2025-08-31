@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
@@ -44,6 +45,8 @@ Route::middleware(['auth'])->group(
         Route::name('profile.')->group(function () {
             Route::get('/profile', [ProfileController::class, 'index'])->name('index');
         });
+
+        Route::post('/products/{product}/reviews', [ProductController::class, 'storeReview'])->name('product.review.store');
     }
 );
 
@@ -52,6 +55,10 @@ Route::get('/shop', [HomeController::class, 'shop'])->name('shop');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::get('/cart-add', [CartController::class, 'add'])->name('cart.add');
+Route::get('/show/{product}', [ProductController::class, 'showDetails'])->name('product.show');
+Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
+Route::get('/products/{product}/reviews/load-more', [ProductController::class, 'loadMoreReviews'])->name('product.reviews.load-more');
 
 // WishList
 Route::get('/wishlist', [WishListController::class, 'index'])->name('wishlist.index');

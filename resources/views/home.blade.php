@@ -169,6 +169,34 @@
             color: white;
         }
 
+        .btn-view-more {
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: #4a5568;
+            padding: 10px 15px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .btn-view-more:hover {
+            border-color: #667eea;
+            color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-view-more-text {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+
         .search-box {
             position: relative;
         }

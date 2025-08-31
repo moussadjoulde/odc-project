@@ -69,6 +69,7 @@
                                    id="email" 
                                    name="email" 
                                    value="{{ old('email', auth()->user()->email) }}" 
+                                   readonly
                                    required>
                             @error('email')
                                 <div class="invalid-feedback">{{ $message }}</div>
