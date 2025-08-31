@@ -41,7 +41,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 Auth::routes();
 
 Route::get('auth/{provider}', [SocialAuthController::class, 'redirect'])->name('oauth.redirect');
-Route::get('auth/{provider}/callback', [SocialAuthController::class, 'callback']);
+Route::get('auth/callback/{provider}', [SocialAuthController::class, 'callback']);
 
 Route::middleware(['auth'])->group(
     function () {
