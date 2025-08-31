@@ -63,3 +63,7 @@ AWS_BUCKET=
 AWS_USE_PATH_STYLE_ENDPOINT=false
 
 VITE_APP_NAME="${APP_NAME}"
+
+GOOGLE_CLIENT_ID=1091021465576-mq18esq7jgdr61i4m6p1c2lrpinmpdt7.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=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
+GOOGLE_REDIRECT_URI=https://soden.odclaravel.tech/google/callback

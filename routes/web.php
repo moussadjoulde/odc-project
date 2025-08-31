@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Oauth\SocialAuthController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\WishListController;
@@ -38,6 +39,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 });
 
 Auth::routes();
+
+Route::get('auth/{provider}', [SocialAuthController::class, 'redirect'])->name('oauth.redirect');
+Route::get('auth/{provider}/callback', [SocialAuthController::class, 'callback']);
 
 Route::middleware(['auth'])->group(
     function () {
