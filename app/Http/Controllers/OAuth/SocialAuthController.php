@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Oauth;
+namespace App\Http\Controllers\OAuth;
 
 use App\Enums\UserRoleEnum;
 use App\Http\Controllers\Controller;

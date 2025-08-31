@@ -5,7 +5,7 @@ use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Oauth\SocialAuthController;
+use App\Http\Controllers\OAuth\SocialAuthController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\WishListController;
