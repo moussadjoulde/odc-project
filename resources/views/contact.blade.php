@@ -3,6 +3,21 @@
 @section('title', 'Contactez-nous')
 
 @section('content')
+
+@if(session('success'))
+    <div class="alert alert-success">{{ session('success') }}</div>
+@endif
+
+@if($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <!-- Page Header -->
 <div class="page-header">
     <div class="container">
@@ -26,7 +41,7 @@
                     <p class="text-muted">Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais.</p>
                 </div>
 
-                <form id="contactForm" method="POST" action="#a">
+                <form id="contactForm" method="POST" action="{{ route('contact.send') }}">
                     @csrf
                     <div class="row g-3">
                         <!-- Prénom et Nom -->
