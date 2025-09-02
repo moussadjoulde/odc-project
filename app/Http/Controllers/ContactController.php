@@ -28,9 +28,9 @@ class ContactController extends Controller
             'email' => $data['email'],
             'phone' => $data['phone'],
             'subject' => $data['subject'],
-            'contactMessage' => $contactMessage, 
+            'contactMessage' => $contactMessage, // <-- utiliser cette variable dans la vue
         ], function ($mail) use ($data) {
-            $mail->to(env('MAIL_FROM_ADDRESS'))
+            $mail->to('sodenecome@gmail.com')
                 ->subject('Nouveau message de contact : ' . $data['subject']);
         });
 
