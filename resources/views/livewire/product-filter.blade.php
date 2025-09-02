@@ -269,12 +269,19 @@
 
                                     <!-- Boutons d'action -->
                                     <div class="product-actions">
-                                        <button class="btn-add-cart" wire:click="addToCart({{ $product->id }}, 1)">
+                                        {{-- <button class="btn-add-cart" wire:click="addToCart({{ $product->id }}, 1)">
                                             <i class="bi bi-cart-plus me-2"></i>Ajouter au panier
+                                        </button> --}}
+
+                                        <button wire:click="addToCart({{ $product->id }}, 1)" class="btn-add-cart"
+                                            {{ $product->stock_quantity <= 0 ? 'disabled' : '' }}>
+                                            <i class="bi bi-cart-plus me-2"></i>
+                                            {{ $product->stock_quantity <= 0 ? 'Rupture de stock' : 'Ajouter au panier' }}
                                         </button>
-                                        
+
                                         <!-- Nouveau bouton "Voir plus" stylisé -->
-                                        <a href="{{ route('product.show', $product->id) }}" class="btn-view-more mt-2">
+                                        <a href="{{ route('product.show', $product->id) }}"
+                                            class="btn-view-more mt-2">
                                             <span class="btn-view-more-text">
                                                 <i class="bi bi-arrow-right me-2"></i>Voir plus
                                             </span>

@@ -135,14 +135,14 @@
                         <i class="bi bi-telephone text-primary me-3"></i>
                         <div>
                             <strong>Téléphone</strong><br>
-                            <a href="tel:+33123456789" class="text-decoration-none">+33 1 23 45 67 89</a>
+                            <a href="tel: {{ config('app.contact') }}" class="text-decoration-none">{{ config('app.contact') }}</a>
                         </div>
                     </div>
                     <div class="d-flex align-items-center">
                         <i class="bi bi-envelope text-primary me-3"></i>
                         <div>
                             <strong>Email</strong><br>
-                            <a href="mailto:contact@monstore.com" class="text-decoration-none">contact@monstore.com</a>
+                            <a href="mailto:{{ config('app.email') }}" class="text-decoration-none">{{ config('app.email') }}</a>
                         </div>
                     </div>
                 </div>

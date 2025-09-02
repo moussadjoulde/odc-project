@@ -67,3 +67,6 @@ VITE_APP_NAME="${APP_NAME}"
 GOOGLE_CLIENT_ID=1091021465576-mq18esq7jgdr61i4m6p1c2lrpinmpdt7.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=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
 GOOGLE_REDIRECT_URI=https://soden.odclaravel.tech/google/callback
+
+APP_MAIL="sodenecome@gmail.com"
+APP_CONTACT="+224626684682"

@@ -123,4 +123,7 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'contact' => env('APP_CONTACT', '+224626684682'),
+    'email' => env('APP_MAIL', 'sodenecome@gmail.com')
+
 ];

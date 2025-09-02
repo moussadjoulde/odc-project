@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
@@ -52,14 +54,42 @@ class ProfileController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // Validation du champ name
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        // Récupérer l'utilisateur
+        $user = User::findOrFail($id);
+
+        // Mettre à jour le nom
+        $user->name = $request->input('name');
+        $user->save();
+
+        // Redirection avec message de succès
+        return redirect()->back()->with('success', 'Profil mis à jour avec succès.');
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        // Vérifie si l'utilisateur authentifié correspond bien
+        if ($user->id !== Auth::id()) {
+            abort(403, 'Action non autorisée');
+        }
+
+        // Déconnexion avant suppression
+        Auth::logout();
+
+        // Suppression du compte
+        $user->delete();
+
+        // Redirection
+        return redirect()->route('home')->with('success', 'Votre compte a été supprimé avec succès.');
     }
 }

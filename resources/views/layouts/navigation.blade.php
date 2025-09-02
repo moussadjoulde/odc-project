@@ -15,26 +15,27 @@
             <!-- Menu principal -->
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/home') }}">
+                    <a class="nav-link {{ request()->is('home') ? 'active' : '' }}" href="{{ url('/home') }}">
                         <i class="bi bi-house me-1"></i>Accueil
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/shop') }}">
+                    <a class="nav-link {{ request()->is('shop') ? 'active' : '' }}" href="{{ url('/shop') }}">
                         <i class="bi bi-bag me-1"></i>Boutique
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/about') }}">
+                    <a class="nav-link {{ request()->is('about') ? 'active' : '' }}" href="{{ url('/about') }}">
                         <i class="bi bi-info-circle me-1"></i>À propos
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/contact') }}">
+                    <a class="nav-link {{ request()->is('contact') ? 'active' : '' }}" href="{{ url('/contact') }}">
                         <i class="bi bi-envelope me-1"></i>Contact
                     </a>
                 </li>
             </ul>
+
 
             <!-- Menu utilisateur -->
             <ul class="navbar-nav ms-auto">

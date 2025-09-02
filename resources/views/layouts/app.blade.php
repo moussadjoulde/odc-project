@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,7 +13,7 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
 
@@ -31,6 +32,13 @@
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
+        }
+
+        logo-small {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            /* évite déformations */
         }
 
         .navbar-modern {
@@ -77,6 +85,17 @@
             width: 80%;
             left: 10%;
         }
+
+        .nav-link.active {
+            color: #667eea !important;
+            font-weight: 600;
+        }
+
+        .nav-link.active::after {
+            width: 100%;
+            left: 0;
+        }
+
 
         .btn-modern {
             background: var(--primary-gradient);
@@ -161,12 +180,12 @@
         .toast-container {
             z-index: 1060;
         }
-        
+
         .toast {
             min-width: 300px;
             box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
         }
-        
+
         .toast .toast-body {
             padding: 0.75rem;
         }
@@ -203,13 +222,13 @@
 
             // Créer le toast
             const toastId = 'toast-' + Date.now();
-            const bgClass = type === 'success' ? 'bg-success' : 
-                           type === 'error' ? 'bg-danger' : 
-                           type === 'warning' ? 'bg-warning' : 'bg-info';
-            
-            const iconClass = type === 'success' ? 'bi-check-circle' : 
-                             type === 'error' ? 'bi-x-circle' : 
-                             type === 'warning' ? 'bi-exclamation-triangle' : 'bi-info-circle';
+            const bgClass = type === 'success' ? 'bg-success' :
+                type === 'error' ? 'bg-danger' :
+                type === 'warning' ? 'bg-warning' : 'bg-info';
+
+            const iconClass = type === 'success' ? 'bi-check-circle' :
+                type === 'error' ? 'bi-x-circle' :
+                type === 'warning' ? 'bi-exclamation-triangle' : 'bi-info-circle';
 
             const toastHTML = `
                 <div id="${toastId}" class="toast align-items-center text-white ${bgClass} border-0" role="alert">
@@ -231,7 +250,7 @@
                 autohide: true,
                 delay: 4000
             });
-            
+
             toast.show();
 
             // Supprimer le toast du DOM après sa fermeture
@@ -241,6 +260,7 @@
         }
     </script>
 </head>
+
 <body>
     <div id="app">
         <!-- Navigation -->
@@ -258,4 +278,5 @@
     <!-- Scripts Bootstrap -->
     {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> --}}
 </body>
+
 </html>

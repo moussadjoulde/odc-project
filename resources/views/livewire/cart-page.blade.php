@@ -84,7 +84,7 @@
                                         <div class="col-md-2 col-3">
                                             <div class="product-image-container">
                                                 @if ($item->product->image)
-                                                    <img src="{{ $item->product->image }}"
+                                                    <img src="{{ asset('storage/' . $item->product->image) }}"
                                                         alt="{{ $item->product->name }}" class="product-image">
                                                 @else
                                                     <div class="product-placeholder">
@@ -117,7 +117,7 @@
                                         <div class="col-md-2 col-6">
                                             <div class="price-section text-center">
                                                 <div class="unit-price fw-bold text-primary h6 mb-0">
-                                                    {{ number_format($item->price, 2, ',', ' ') }} €
+                                                    {{ number_format($item->price, 0, ',', ' ') }} GNF
                                                 </div>
                                                 <small class="text-muted">Prix unitaire</small>
                                             </div>
@@ -149,8 +149,8 @@
                                         <div class="col-md-1 col-6">
                                             <div class="line-total text-center">
                                                 <div class="total-price fw-bold h6 mb-0 text-success">
-                                                    {{ number_format($this->getItemTotal($item->price, $item->quantity), 2, ',', ' ') }}
-                                                    €
+                                                    {{ number_format($this->getItemTotal($item->price, $item->quantity), 0, ',', ' ') }}
+                                                    GNF
                                                 </div>
                                                 <small class="text-muted">Total</small>
                                             </div>
@@ -221,8 +221,8 @@
                             <div class="summary-body p-4">
                                 <div class="summary-line d-flex justify-content-between align-items-center mb-3">
                                     <span class="text-muted">Sous-total ({{ count($cartItems) }} articles)</span>
-                                    <span class="fw-semibold h6 mb-0">{{ number_format($total, 2, ',', ' ') }}
-                                        €</span>
+                                    <span class="fw-semibold h6 mb-0">{{ number_format($total, 0, ',', ' ') }}
+                                        GNF</span>
                                 </div>
 
                                 <div class="summary-line d-flex justify-content-between align-items-center mb-3">
@@ -241,13 +241,13 @@
                                         <div class="d-flex align-items-center">
                                             <i class="bi bi-truck text-primary me-2"></i>
                                             <div class="flex-fill">
-                                                <small class="fw-semibold">Livraison gratuite dès 50€</small>
+                                                <small class="fw-semibold">Livraison gratuite dès 50 GNF</small>
                                                 <div class="progress mt-1" style="height: 4px;">
                                                     <div class="progress-bar"
                                                         style="width: {{ ($total / 50) * 100 }}%"></div>
                                                 </div>
                                                 <small class="text-muted">
-                                                    Plus que {{ number_format(50 - $total, 2, ',', ' ') }} € !
+                                                    Plus que {{ number_format(50 - $total, 0, ',', ' ') }} GNF !
                                                 </small>
                                             </div>
                                         </div>
@@ -260,7 +260,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <span class="h5 fw-bold mb-0">Total à payer</span>
                                         <span class="h4 fw-bold text-primary mb-0">
-                                            {{ number_format($total + ($total >= 50 ? 0 : 4.99), 2, ',', ' ') }} €
+                                            {{ number_format($total + ($total >= 50 ? 0 : 4.99), 0, ',', ' ') }} GNF
                                         </span>
                                     </div>
                                     <small class="text-muted">TVA incluse</small>
@@ -268,7 +268,7 @@
 
                                 <div class="d-grid gap-3">
                                     <button class="btn btn-modern btn-lg rounded-pill">
-                                        <i class="bi bi-credit-card me-2"></i>Passer la commande
+                                        <i class="bi bi-credit-card me-2" wire:click="placeOrder"></i>Passer la commande
                                     </button>
                                     <button class="btn btn-outline-primary btn-lg rounded-pill">
                                         <i class="bi bi-paypal me-2"></i>PayPal Express
