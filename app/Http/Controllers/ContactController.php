@@ -30,7 +30,7 @@ class ContactController extends Controller
             'subject' => $data['subject'],
             'contactMessage' => $contactMessage, 
         ], function ($mail) use ($data) {
-            $mail->to(env('APP_MAIL'))
+            $mail->to(env('MAIL_FROM_ADDRESS'))
                 ->subject('Nouveau message de contact : ' . $data['subject']);
         });
 
