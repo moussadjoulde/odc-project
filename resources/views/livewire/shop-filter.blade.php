@@ -102,9 +102,17 @@
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
         .product-overlay {
@@ -248,7 +256,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s;
         }
 
@@ -484,7 +492,7 @@
             <div class="row align-items-center">
                 <div class="col-lg-8">
                     <h1 class="display-4 fw-bold mb-3">Notre Boutique</h1>
-                    <p class="lead mb-0">Découvrez notre collection soigneusement sélectionnée de produits premium. 
+                    <p class="lead mb-0">Découvrez notre collection soigneusement sélectionnée de produits premium.
                         Qualité garantie, livraison rapide et service client exceptionnel.</p>
                 </div>
                 <div class="col-lg-4 text-center">
@@ -502,10 +510,8 @@
             <div class="row align-items-center">
                 <div class="col-lg-6">
                     <div class="search-box">
-                        <input type="text" 
-                               class="form-control" 
-                               placeholder="Rechercher un produit, une marque..."
-                               wire:model.live.debounce.500ms="search">
+                        <input type="text" class="form-control" placeholder="Rechercher un produit, une marque..."
+                            wire:model.live.debounce.500ms="search">
                         <button class="btn btn-primary">
                             <i class="bi bi-search"></i>
                         </button>
@@ -517,19 +523,37 @@
                             <button class="btn dropdown-toggle w-100" type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-funnel me-2"></i>
                                 @switch($sortBy)
-                                    @case('price_asc') Prix croissant @break
-                                    @case('price_desc') Prix décroissant @break
-                                    @case('rating') Meilleures notes @break
-                                    @case('popular') Popularité @break
-                                    @default Nouveautés
+                                    @case('price_asc')
+                                        Prix croissant
+                                    @break
+
+                                    @case('price_desc')
+                                        Prix décroissant
+                                    @break
+
+                                    @case('rating')
+                                        Meilleures notes
+                                    @break
+
+                                    @case('popular')
+                                        Popularité
+                                    @break
+
+                                    @default
+                                        Nouveautés
                                 @endswitch
                             </button>
                             <ul class="dropdown-menu w-100">
-                                <li><button class="dropdown-item" wire:click="setSortBy('price_asc')">Prix croissant</button></li>
-                                <li><button class="dropdown-item" wire:click="setSortBy('price_desc')">Prix décroissant</button></li>
-                                <li><button class="dropdown-item" wire:click="setSortBy('popular')">Popularité</button></li>
-                                <li><button class="dropdown-item" wire:click="setSortBy('newest')">Nouveautés</button></li>
-                                <li><button class="dropdown-item" wire:click="setSortBy('rating')">Meilleures notes</button></li>
+                                <li><button class="dropdown-item" wire:click="setSortBy('price_asc')">Prix
+                                        croissant</button></li>
+                                <li><button class="dropdown-item" wire:click="setSortBy('price_desc')">Prix
+                                        décroissant</button></li>
+                                <li><button class="dropdown-item" wire:click="setSortBy('popular')">Popularité</button>
+                                </li>
+                                <li><button class="dropdown-item" wire:click="setSortBy('newest')">Nouveautés</button>
+                                </li>
+                                <li><button class="dropdown-item" wire:click="setSortBy('rating')">Meilleures
+                                        notes</button></li>
                             </ul>
                         </div>
                     </div>
@@ -537,7 +561,7 @@
                 <div class="col-lg-3">
                     <div class="results-info text-end">
                         <span>{{ $resultsCount }} produits trouvés</span>
-                        @if($hasFilters)
+                        @if ($hasFilters)
                             <br><small class="text-muted">{{ $currentFilterText }}</small>
                         @endif
                     </div>
@@ -550,7 +574,7 @@
             <div class="col-lg-3">
                 <div class="filter-sidebar">
                     <!-- Bouton de réinitialisation -->
-                    @if($hasFilters)
+                    @if ($hasFilters)
                         <div class="mb-3">
                             <button wire:click="resetAllFilters" class="btn btn-outline-danger btn-sm w-100">
                                 <i class="bi bi-arrow-clockwise me-2"></i>Réinitialiser les filtres
@@ -563,13 +587,13 @@
                         <h5 class="filter-title">
                             <i class="bi bi-grid-3x3-gap me-2"></i>Catégories
                         </h5>
-                        <button wire:click="setCategory('all')" 
-                                class="category-btn {{ $category === 'all' ? 'active' : '' }}">
+                        <button wire:click="setCategory('all')"
+                            class="category-btn {{ $category === 'all' ? 'active' : '' }}">
                             <i class="bi bi-stars me-2"></i>Tous les produits
                         </button>
-                        @foreach($availableCategories as $cat)
-                            <button wire:click="setCategory('{{ $cat['id'] }}')" 
-                                    class="category-btn {{ $category == $cat['id'] ? 'active' : '' }}">
+                        @foreach ($availableCategories as $cat)
+                            <button wire:click="setCategory('{{ $cat['id'] }}')"
+                                class="category-btn {{ $category == $cat['id'] ? 'active' : '' }}">
                                 <i class="bi bi-{{ $cat['icon'] ?? 'tag' }} me-2"></i>{{ $cat['name'] }}
                             </button>
                         @endforeach
@@ -582,37 +606,29 @@
                         </h5>
                         <div class="price-range-container">
                             <div class="mb-3">
-                                <label class="form-label">Prix minimum: {{ $minPrice }}€</label>
-                                <input type="range" 
-                                       class="form-range" 
-                                       min="0" 
-                                       max="{{ $maxPrice }}" 
-                                       wire:model.live="minPrice">
+                                <label class="form-label">Prix minimum: {{ $minPrice }} GNF</label>
+                                <input type="range" class="form-range" min="0" max="{{ $maxPrice }}"
+                                    wire:model.live="minPrice">
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Prix maximum: {{ $maxPrice }}€</label>
-                                <input type="range" 
-                                       class="form-range" 
-                                       min="{{ $minPrice }}" 
-                                       max="1000" 
-                                       wire:model.live="maxPrice">
+                                <label class="form-label">Prix maximum: {{ $maxPrice }} GNF</label>
+                                <input type="range" class="form-range" min="{{ $minPrice }}" max="1000"
+                                    wire:model.live="maxPrice">
                             </div>
                         </div>
                     </div>
 
                     <!-- Marques -->
-                    @if(!empty($availableBrands))
+                    @if (!empty($availableBrands))
                         <div class="filter-section">
                             <h5 class="filter-title">
                                 <i class="bi bi-award me-2"></i>Marques
                             </h5>
-                            @foreach($availableBrands as $brand)
+                            @foreach ($availableBrands as $brand)
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" 
-                                           type="checkbox" 
-                                           id="brand-{{ $loop->index }}"
-                                           wire:change="toggleBrand('{{ $brand }}')"
-                                           {{ in_array($brand, $brands) ? 'checked' : '' }}>
+                                    <input class="form-check-input" type="checkbox" id="brand-{{ $loop->index }}"
+                                        wire:change="toggleBrand('{{ $brand }}')"
+                                        {{ in_array($brand, $brands) ? 'checked' : '' }}>
                                     <label class="form-check-label" for="brand-{{ $loop->index }}">
                                         {{ $brand }}
                                     </label>
@@ -627,34 +643,22 @@
                             <i class="bi bi-star me-2"></i>Note minimum
                         </h5>
                         <div class="form-check mb-2">
-                            <input class="form-check-input" 
-                                   type="radio" 
-                                   name="rating" 
-                                   id="rating5"
-                                   wire:click="setRating('5')"
-                                   {{ $rating === '5' ? 'checked' : '' }}>
+                            <input class="form-check-input" type="radio" name="rating" id="rating5"
+                                wire:click="setRating('5')" {{ $rating === '5' ? 'checked' : '' }}>
                             <label class="form-check-label" for="rating5">
                                 <span class="stars">★★★★★</span>
                             </label>
                         </div>
                         <div class="form-check mb-2">
-                            <input class="form-check-input" 
-                                   type="radio" 
-                                   name="rating" 
-                                   id="rating4"
-                                   wire:click="setRating('4')"
-                                   {{ $rating === '4' ? 'checked' : '' }}>
+                            <input class="form-check-input" type="radio" name="rating" id="rating4"
+                                wire:click="setRating('4')" {{ $rating === '4' ? 'checked' : '' }}>
                             <label class="form-check-label" for="rating4">
                                 <span class="stars">★★★★☆</span> et plus
                             </label>
                         </div>
                         <div class="form-check mb-2">
-                            <input class="form-check-input" 
-                                   type="radio" 
-                                   name="rating" 
-                                   id="rating3"
-                                   wire:click="setRating('3')"
-                                   {{ $rating === '3' ? 'checked' : '' }}>
+                            <input class="form-check-input" type="radio" name="rating" id="rating3"
+                                wire:click="setRating('3')" {{ $rating === '3' ? 'checked' : '' }}>
                             <label class="form-check-label" for="rating3">
                                 <span class="stars">★★★☆☆</span> et plus
                             </label>
@@ -676,33 +680,42 @@
                     @forelse($products as $product)
                         <div class="product-card animate-fade-in">
                             <div class="product-image">
-                                @if($product->images && $product->images->count() > 0)
+                                @if ($product->images && $product->images->count() > 0)
                                     <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
                                 @else
                                     <div class="product-placeholder">
                                         <i class="bi bi-{{ $product->category->icon ?? 'box' }}"></i>
                                     </div>
                                 @endif
-                                
-                                <button wire:click="toggleWishList({{ $product->id }})" 
+
+                                @if (auth()->check())
+                                    <button wire:click="toggleWishList({{ $product->id }})"
                                         class="wishlist-btn {{ $this->isInWishList($product->id) ? 'active' : '' }}">
-                                    <i class="bi bi-{{ $this->isInWishList($product->id) ? 'heart-fill' : 'heart' }}"></i>
-                                </button>
-                                
-                                @if($product->discount_percentage > 0)
+                                        <i
+                                            class="bi bi-{{ $this->isInWishList($product->id) ? 'heart-fill' : 'heart' }}"></i>
+                                    </button>
+                                @endif
+
+                                @if ($product->discount_percentage > 0)
                                     <div class="product-badge">-{{ $product->discount_percentage }}%</div>
                                 @elseif($product->is_new)
-                                    <div class="product-badge" style="background: linear-gradient(135deg, #10ac84 0%, #1dd1a1 100%);">Nouveau</div>
+                                    <div class="product-badge"
+                                        style="background: linear-gradient(135deg, #10ac84 0%, #1dd1a1 100%);">Nouveau
+                                    </div>
                                 @elseif($product->is_featured)
-                                    <div class="product-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">Promo</div>
+                                    <div class="product-badge"
+                                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">Promo
+                                    </div>
                                 @endif
-                                
+
                                 <div class="product-overlay">
                                     <div class="overlay-buttons">
-                                        <button class="btn-overlay" title="Aperçu rapide" data-bs-toggle="modal" data-bs-target="#productModal{{ $product->id }}">
+                                        <button class="btn-overlay" title="Aperçu rapide" data-bs-toggle="modal"
+                                            data-bs-target="#productModal{{ $product->id }}">
                                             <i class="bi bi-eye"></i>
                                         </button>
-                                        <button wire:click="addToCart({{ $product->id }})" class="btn-overlay" title="Ajouter au panier">
+                                        <button wire:click="addToCart({{ $product->id }})" class="btn-overlay"
+                                            title="Ajouter au panier">
                                             <i class="bi bi-cart-plus"></i>
                                         </button>
                                         <button class="btn-overlay" title="Comparer">
@@ -717,22 +730,22 @@
                                 <p class="product-description">{{ Str::limit($product->description, 100) }}</p>
                                 <div class="product-price">
                                     {{ $this->formatPrice($product->price) }}
-                                    @if($product->old_price && $product->old_price > $product->price)
+                                    @if ($product->old_price && $product->old_price > $product->price)
                                         <span class="old-price">{{ $this->formatPrice($product->old_price) }}</span>
-                                        <span class="discount-badge">-{{ round((($product->old_price - $product->price) / $product->old_price) * 100) }}%</span>
+                                        <span
+                                            class="discount-badge">-{{ round((($product->old_price - $product->price) / $product->old_price) * 100) }}%</span>
                                     @endif
                                 </div>
-                                @if($product->rating > 0)
+                                @if ($product->rating > 0)
                                     <div class="product-rating">
                                         <div class="stars">{!! $this->generateStars($product->rating) !!}</div>
                                         <span class="rating-count">({{ $product->review_count }} avis)</span>
                                     </div>
                                 @endif
-                                <button wire:click="addToCart({{ $product->id }})" 
-                                        class="btn-add-cart"
-                                        {{ $product-> stock_quantity <= 0 ? 'disabled' : '' }}>
+                                <button wire:click="addToCart({{ $product->id }})" class="btn-add-cart"
+                                    {{ $product->stock_quantity <= 0 ? 'disabled' : '' }}>
                                     <i class="bi bi-cart-plus me-2"></i>
-                                    {{ $product-> stock_quantity <= 0 ? 'Rupture de  stock_quantity' : 'Ajouter au panier' }}
+                                    {{ $product->stock_quantity <= 0 ? 'Rupture de  stock_quantity' : 'Ajouter au panier' }}
                                 </button>
                             </div>
                         </div>
@@ -741,8 +754,9 @@
                             <div class="text-center py-5">
                                 <i class="bi bi-search display-1 text-muted mb-3"></i>
                                 <h4 class="text-muted">Aucun produit trouvé</h4>
-                                <p class="text-muted">Essayez de modifier vos critères de recherche ou de supprimer certains filtres.</p>
-                                @if($hasFilters)
+                                <p class="text-muted">Essayez de modifier vos critères de recherche ou de supprimer
+                                    certains filtres.</p>
+                                @if ($hasFilters)
                                     <button wire:click="resetAllFilters" class="btn btn-primary mt-3">
                                         <i class="bi bi-arrow-clockwise me-2"></i>Réinitialiser les filtres
                                     </button>
@@ -753,7 +767,7 @@
                 </div>
 
                 <!-- Pagination -->
-                @if($products->hasPages())
+                @if ($products->hasPages())
                     <div class="pagination-container">
                         {{ $products->links() }}
                     </div>
@@ -771,7 +785,8 @@
                         <i class="bi bi-envelope-heart me-2"></i>
                         Ne manquez aucune promotion
                     </h3>
-                    <p class="text-muted mb-0">Inscrivez-vous à notre newsletter et recevez en exclusivité nos meilleures 
+                    <p class="text-muted mb-0">Inscrivez-vous à notre newsletter et recevez en exclusivité nos
+                        meilleures
                         offres, nouveautés et conseils d'experts directement dans votre boîte mail.</p>
                 </div>
                 <div class="col-lg-6">
@@ -802,7 +817,7 @@
         function initializeShopComponents() {
             // Animation des cartes produits avec Intersection Observer
             const productCards = document.querySelectorAll('.product-card');
-            
+
             const observerOptions = {
                 threshold: 0.1,
                 rootMargin: '0px 0px -50px 0px'
@@ -831,7 +846,7 @@
             function handleResponsive() {
                 const sidebar = document.querySelector('.filter-sidebar');
                 const windowWidth = window.innerWidth;
-                
+
                 if (sidebar) {
                     if (windowWidth <= 768) {
                         sidebar.style.position = 'relative';
@@ -866,10 +881,11 @@
                         const originalText = button.innerHTML;
                         button.innerHTML = '<i class="bi bi-check2 me-2"></i>Ajouté !';
                         button.style.background = 'linear-gradient(135deg, #10ac84 0%, #1dd1a1 100%)';
-                        
+
                         setTimeout(() => {
                             button.innerHTML = originalText;
-                            button.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                            button.style.background =
+                                'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
                         }, 2000);
                     }
                 }

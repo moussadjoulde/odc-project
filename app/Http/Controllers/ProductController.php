@@ -18,7 +18,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::latest()->get();
+        $products = Product::latest()->paginate(10);
         return view('products.index', compact('products'));
     }
 
@@ -92,7 +92,8 @@ class ProductController extends Controller
     public function edit(string $id)
     {
         $product = Product::findOrFail($id);
-        return view('products.edit', compact('product'));
+        $categories = Category::latest()->get();
+        return view('products.edit', compact('product', 'categories'));
     }
 
     /**

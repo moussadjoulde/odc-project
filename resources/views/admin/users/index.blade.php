@@ -1,10 +1,10 @@
 @extends('layouts.product')
 
-@section('title', 'Gestion des Produits')
+@section('title', 'Gestion des Utilisateurs')
 
 @section('content')
     <style>
-        /* Styles personnalisés pour la page produits */
+        /* Styles personnalisés pour la page utilisateurs */
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
@@ -95,12 +95,9 @@
         }
 
         @keyframes float {
-
-            0%,
-            100% {
+            0%, 100% {
                 transform: translateY(0px);
             }
-
             50% {
                 transform: translateY(-20px);
             }
@@ -164,17 +161,25 @@
             vertical-align: middle;
         }
 
-        .product-avatar {
+        .user-avatar {
             width: 50px;
             height: 50px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 12px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: 600;
             font-size: 1.1rem;
+        }
+
+        .profile-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .btn-group-modern .btn {
@@ -238,14 +243,50 @@
             color: white;
         }
 
-        .price-badge {
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-            color: white;
-            padding: 0.5rem 1rem;
+        .role-badge {
+            padding: 0.4rem 0.8rem;
             border-radius: 20px;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.875rem;
             display: inline-block;
+        }
+
+        .role-admin {
+            background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+            color: white;
+        }
+
+        .role-moderator {
+            background: linear-gradient(135deg, #dd6b20 0%, #c05621 100%);
+            color: white;
+        }
+
+        .role-editor {
+            background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+            color: white;
+        }
+
+        .role-user {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            color: white;
+        }
+
+        .verification-badge {
+            padding: 0.3rem 0.6rem;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            display: inline-block;
+        }
+
+        .verified {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+        }
+
+        .unverified {
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+            color: white;
         }
 
         @media (max-width: 768px) {
@@ -261,6 +302,19 @@
                 flex-direction: column;
                 gap: 0.25rem;
             }
+        }
+
+        .role-select {
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            padding: 0.4rem 0.8rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .role-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
         }
     </style>
 
@@ -293,10 +347,10 @@
     <div class="page-header text-center">
         <div class="container-fluid">
             <div class="float-animation mb-4">
-                <i class="bi bi-box-seam" style="font-size: 4rem; color: #667eea;"></i>
+                <i class="bi bi-people" style="font-size: 4rem; color: #667eea;"></i>
             </div>
-            <h1 class="display-4 fw-bold mb-3" style="color: #2d3748;">Gestion des Produits</h1>
-            <p class="lead" style="color: #718096;">Gérez facilement votre catalogue de produits avec style</p>
+            <h1 class="display-4 fw-bold mb-3" style="color: #2d3748;">Gestion des Utilisateurs</h1>
+            <p class="lead" style="color: #718096;">Gérez les comptes utilisateurs et leurs permissions avec simplicité</p>
         </div>
     </div>
 
@@ -306,42 +360,86 @@
             <!-- Statistiques -->
             <div class="col-lg-8">
                 <div class="row">
-                    <div class="col-md-6 mb-4">
+                    <div class="col-md-3 mb-4">
                         <div class="stat-card">
                             <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0 me-4">
+                                <div class="flex-shrink-0 me-3">
                                     <div class="bg-primary bg-opacity-10 rounded-circle p-3">
-                                        <i class="bi bi-box text-primary" style="font-size: 2.5rem;"></i>
+                                        <i class="bi bi-people text-primary" style="font-size: 2rem;"></i>
                                     </div>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <h6 class="stat-label mb-2">Total Produits</h6>
-                                    <div class="stat-number">{{ count($products) }}</div>
+                                    <h6 class="stat-label mb-2">Total Utilisateurs</h6>
+                                    <div class="stat-number">{{ count($users) }}</div>
                                     <small class="text-muted">
                                         <i class="bi bi-graph-up text-success me-1"></i>
-                                        Catalogue complet
+                                        Comptes
                                     </small>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-6 mb-4">
+                    <div class="col-md-3 mb-4">
                         <div class="stat-card">
                             <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0 me-4">
+                                <div class="flex-shrink-0 me-3">
                                     <div class="bg-success bg-opacity-10 rounded-circle p-3">
-                                        <i class="bi bi-currency-euro text-success" style="font-size: 2.5rem;"></i>
+                                        <i class="bi bi-shield-check text-success" style="font-size: 2rem;"></i>
                                     </div>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <h6 class="stat-label mb-2">Valeur Totale</h6>
+                                    <h6 class="stat-label mb-2">Vérifiés</h6>
                                     <div class="stat-number">
-                                        {{ number_format($products->sum('price'), 0, ',', ' ') }} GNF
+                                        {{ $users->whereNotNull('email_verified_at')->count() }}
                                     </div>
                                     <small class="text-muted">
-                                        <i class="bi bi-trending-up text-success me-1"></i>
-                                        Inventaire valorisé
+                                        <i class="bi bi-check text-success me-1"></i>
+                                        Email
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-4">
+                        <div class="stat-card">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0 me-3">
+                                    <div class="bg-warning bg-opacity-10 rounded-circle p-3">
+                                        <i class="bi bi-shield-exclamation text-warning" style="font-size: 2rem;"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="stat-label mb-2">Non vérifiés</h6>
+                                    <div class="stat-number">
+                                        {{ $users->whereNull('email_verified_at')->count() }}
+                                    </div>
+                                    <small class="text-muted">
+                                        <i class="bi bi-x text-warning me-1"></i>
+                                        Attente
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-4">
+                        <div class="stat-card">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0 me-3">
+                                    <div class="bg-info bg-opacity-10 rounded-circle p-3">
+                                        <i class="bi bi-person-gear text-info" style="font-size: 2rem;"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="stat-label mb-2">Admins</h6>
+                                    <div class="stat-number">
+                                        {{ $users->filter(function($user) { return $user->hasRole('admin'); })->count() }}
+                                    </div>
+                                    <small class="text-muted">
+                                        <i class="bi bi-gear text-info me-1"></i>
+                                        Rôle
                                     </small>
                                 </div>
                             </div>
@@ -355,11 +453,11 @@
                 <div class="stat-card d-flex flex-column justify-content-center">
                     <div class="text-center">
                         <h6 class="stat-label mb-4">Actions Rapides</h6>
-                        <a href="{{ route('products.create') }}" class="btn btn-gradient-primary btn-lg mb-3 w-100">
-                            <i class="bi bi-plus-circle me-2"></i>
-                            Nouveau Produit
+                        <a href="{{ route('users.create') }}" class="btn btn-gradient-primary btn-lg mb-3 w-100">
+                            <i class="bi bi-person-plus me-2"></i>
+                            Nouvel Utilisateur
                         </a>
-                        <a href="{{ route('products.exportCSV') }}" class="btn btn-outline-secondary w-100">
+                        <a href="{{ route('users.exportCSV') }}" class="btn btn-outline-secondary w-100">
                             <i class="bi bi-download me-2"></i>
                             Exporter en CSV
                         </a>
@@ -368,16 +466,16 @@
             </div>
         </div>
 
-        <!-- Table des produits -->
+        <!-- Table des utilisateurs -->
         <div class="card border-0 table-modern">
             <div class="card-header bg-white border-0 py-4">
                 <div class="row align-items-center">
                     <div class="col-md-6">
                         <h3 class="card-title mb-0 fw-bold d-flex align-items-center">
                             <i class="bi bi-list-ul me-3 text-primary"></i>
-                            Liste des Produits
+                            Liste des Utilisateurs
                             <span class="badge bg-primary bg-opacity-10 text-primary ms-3 rounded-pill px-3">
-                                {{ count($products) }}
+                                {{ count($users) }}
                             </span>
                         </h3>
                     </div>
@@ -387,7 +485,7 @@
                                 <span class="input-group-text">
                                     <i class="bi bi-search"></i>
                                 </span>
-                                <input type="text" class="form-control" placeholder="Rechercher un produit..."
+                                <input type="text" class="form-control" placeholder="Rechercher un utilisateur..."
                                     id="searchInput">
                             </div>
                         </div>
@@ -395,26 +493,34 @@
                 </div>
             </div>
 
-            @if (count($products) > 0)
+            @if (count($users) > 0)
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0" id="productsTable">
+                        <table class="table table-hover mb-0" id="usersTable">
                             <thead>
                                 <tr>
                                     <th style="width: 80px;">
                                         <i class="bi bi-hash me-1"></i>ID
                                     </th>
                                     <th>
-                                        <i class="bi bi-tag me-2"></i>
-                                        Produit
+                                        <i class="bi bi-person me-2"></i>
+                                        Utilisateur
                                     </th>
                                     <th>
-                                        <i class="bi bi-card-text me-2"></i>
-                                        Description
+                                        <i class="bi bi-envelope me-2"></i>
+                                        Email
                                     </th>
-                                    <th>
-                                        <i class="bi bi-currency-euro me-2"></i>
-                                        Prix
+                                    <th class="text-center" style="width: 120px;">
+                                        <i class="bi bi-shield me-2"></i>
+                                        Rôle
+                                    </th>
+                                    <th class="text-center" style="width: 120px;">
+                                        <i class="bi bi-check-circle me-2"></i>
+                                        Vérification
+                                    </th>
+                                    <th class="text-center" style="width: 140px;">
+                                        <i class="bi bi-calendar me-2"></i>
+                                        Inscription
                                     </th>
                                     <th class="text-center" style="width: 250px;">
                                         <i class="bi bi-gear me-2"></i>
@@ -423,85 +529,141 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($products as $product)
+                                @foreach ($users as $user)
                                     <tr>
                                         <!-- ID -->
                                         <td>
                                             <span class="badge badge-gradient-primary rounded-pill"
                                                 style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 600;">
-                                                {{ $product->id }}
+                                                {{ $user->id }}
                                             </span>
                                         </td>
 
-                                        <!-- Produit -->
+                                        <!-- Utilisateur -->
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <div class="product-avatar me-3">
-                                                    {{ strtoupper(substr($product->name, 0, 2)) }}
+                                                <div class="me-3">
+                                                    @if($user->profile_picture)
+                                                        <img src="{{ asset('storage/' . $user->profile_picture) }}" 
+                                                             alt="{{ $user->name }}" 
+                                                             class="profile-image">
+                                                    @else
+                                                        <div class="user-avatar">
+                                                            {{ strtoupper(substr($user->name, 0, 2)) }}
+                                                        </div>
+                                                    @endif
                                                 </div>
                                                 <div>
-                                                    <h6 class="mb-1 fw-bold" style="color: #2d3748;">{{ $product->name }}
-                                                    </h6>
-                                                    <small class="text-muted d-flex align-items-center">
-                                                        <i class="bi bi-tag me-1"></i>
-                                                        SKU: {{ $product->sku ?? 'N/A' }}
-                                                    </small>
+                                                    <h6 class="mb-1 fw-bold" style="color: #2d3748;">{{ $user->name }}</h6>
+                                                    @if($user->provider)
+                                                        <small class="text-muted d-flex align-items-center">
+                                                            <i class="bi bi-link-45deg me-1"></i>
+                                                            {{ ucfirst($user->provider) }}
+                                                        </small>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </td>
 
-                                        <!-- Description -->
+                                        <!-- Email -->
                                         <td>
-                                            <div class="description-cell">
-                                                <p class="mb-1" style="color: #4a5568;">
-                                                    {{ Str::limit($product->description, 60) }}
-                                                </p>
-                                                @if (strlen($product->description) > 60)
-                                                    <small class="text-primary" style="cursor: pointer;"
-                                                        onclick="showFullDescription('{{ addslashes($product->description) }}', '{{ $product->name }}')">
-                                                        <i class="bi bi-eye me-1"></i>Voir plus
+                                            <div>
+                                                <span class="fw-medium" style="color: #4a5568;">{{ $user->email }}</span>
+                                                @if($user->email_verified_at)
+                                                    <br><small class="text-success">
+                                                        <i class="bi bi-shield-check me-1"></i>Vérifié
+                                                    </small>
+                                                @else
+                                                    <br><small class="text-warning">
+                                                        <i class="bi bi-shield-exclamation me-1"></i>Non vérifié
                                                     </small>
                                                 @endif
                                             </div>
                                         </td>
 
-                                        <!-- Prix -->
-                                        <td>
-                                            <span class="price-badge">
-                                                {{ number_format($product->price, 0, ',', ' ') }} GNF
-                                            </span>
+                                        <!-- Rôle avec sélecteur -->
+                                        <td class="text-center">
+                                            <form action="{{ route('users.updateRole', $user) }}" method="POST" class="role-update-form">
+                                                @csrf
+                                                @method('PATCH')
+                                                <select name="role" class="form-select form-select-sm role-select" 
+                                                        onchange="this.form.submit()"
+                                                        @if($user->id === auth()->id()) disabled @endif>
+                                                    <option value="">Aucun rôle</option>
+                                                    @foreach($roles as $role)
+                                                        <option value="{{ $role->name }}" 
+                                                                @if($user->hasRole($role->name)) selected @endif>
+                                                            {{ ucfirst($role->name) }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </form>
+                                        </td>
+
+                                        <!-- Vérification -->
+                                        <td class="text-center">
+                                            @if($user->email_verified_at)
+                                                <span class="verification-badge verified">
+                                                    <i class="bi bi-check-circle me-1"></i>Vérifié
+                                                </span>
+                                            @else
+                                                <span class="verification-badge unverified">
+                                                    <i class="bi bi-clock me-1"></i>Attente
+                                                </span>
+                                            @endif
+                                        </td>
+
+                                        <!-- Date d'inscription -->
+                                        <td class="text-center">
+                                            <div>
+                                                <span class="fw-medium" style="color: #4a5568;">
+                                                    {{ $user->created_at->format('d/m/Y') }}
+                                                </span>
+                                                <br>
+                                                <small class="text-muted">
+                                                    {{ $user->created_at->format('H:i') }}
+                                                </small>
+                                            </div>
                                         </td>
 
                                         <!-- Actions -->
                                         <td>
                                             <div class="btn-group-modern d-flex justify-content-center" role="group">
                                                 <!-- Voir -->
-                                                <a href="{{ route('products.show', $product) }}"
-                                                    class="btn btn-outline-primary btn-sm" title="Voir les détails"
+                                                <a href="{{ route('users.show', $user) }}"
+                                                    class="btn btn-outline-primary btn-sm" title="Voir le profil"
                                                     data-bs-toggle="tooltip">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
 
                                                 <!-- Modifier -->
-                                                <a href="{{ route('products.edit', $product) }}"
+                                                <a href="{{ route('users.edit', $user) }}"
                                                     class="btn btn-outline-warning btn-sm" title="Modifier"
                                                     data-bs-toggle="tooltip">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
 
-                                                <!-- Exporter CSV -->
-                                                <a href="{{ route('products.exportCSVWithId', $product) }}"
-                                                    class="btn btn-outline-info btn-sm" title="Exporter en CSV"
-                                                    data-bs-toggle="tooltip">
-                                                    <i class="bi bi-file-earmark-spreadsheet"></i>
-                                                </a>
+                                                <!-- Envoyer email de vérification -->
+                                                @if(!$user->email_verified_at)
+                                                <form method="POST" action="{{ route('users.sendVerification', $user) }}" style="display: inline;">
+                                                    @csrf
+                                                    <button type="submit" 
+                                                            class="btn btn-outline-info btn-sm" 
+                                                            title="Renvoyer email de vérification"
+                                                            data-bs-toggle="tooltip">
+                                                        <i class="bi bi-envelope-check"></i>
+                                                    </button>
+                                                </form>
+                                                @endif
 
                                                 <!-- Supprimer -->
+                                                @if($user->id !== auth()->id())
                                                 <button type="button" class="btn btn-outline-danger btn-sm"
                                                     title="Supprimer" data-bs-toggle="tooltip"
-                                                    onclick="confirmDelete('{{ $product->name }}', '{{ route('products.destroy', $product) }}')">
+                                                    onclick="confirmDelete('{{ $user->name }}', '{{ route('users.destroy', $user) }}')">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>
@@ -514,14 +676,13 @@
                 <!-- État vide -->
                 <div class="empty-state">
                     <div class="empty-state-icon">
-                        <i class="bi bi-inbox"></i>
+                        <i class="bi bi-people"></i>
                     </div>
-                    <h3 class="fw-bold mb-3" style="color: #4a5568;">Aucun produit trouvé</h3>
-                    <p class="text-muted mb-4 fs-5">Commencez par créer votre premier produit pour voir apparaître votre
-                        catalogue ici.</p>
-                    <a href="{{ route('products.create') }}" class="btn btn-gradient-primary btn-lg">
-                        <i class="bi bi-plus-circle me-2"></i>
-                        Créer mon premier produit
+                    <h3 class="fw-bold mb-3" style="color: #4a5568;">Aucun utilisateur trouvé</h3>
+                    <p class="text-muted mb-4 fs-5">Commencez par créer votre premier compte utilisateur.</p>
+                    <a href="{{ route('users.create') }}" class="btn btn-gradient-primary btn-lg">
+                        <i class="bi bi-person-plus me-2"></i>
+                        Créer le premier utilisateur
                     </a>
                 </div>
             @endif
@@ -540,12 +701,12 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body pt-2">
-                    <p class="text-muted mb-4">Êtes-vous sûr de vouloir supprimer le produit <strong
-                            id="productToDelete"></strong> ?</p>
+                    <p class="text-muted mb-4">Êtes-vous sûr de vouloir supprimer l'utilisateur <strong
+                            id="userToDelete"></strong> ?</p>
                     <div class="alert alert-warning border-0"
                         style="border-radius: 12px; background: rgba(255, 193, 7, 0.1);">
                         <i class="bi bi-info-circle text-warning me-2"></i>
-                        Cette action est irréversible.
+                        Cette action est irréversible et supprimera définitivement le compte utilisateur.
                     </div>
                 </div>
                 <div class="modal-footer border-0 pt-0">
@@ -565,27 +726,6 @@
         </div>
     </div>
 
-    <!-- Modal pour afficher la description complète -->
-    <div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content border-0" style="border-radius: 16px;">
-                <div class="modal-header border-0 pb-2">
-                    <h5 class="modal-title fw-bold" id="descriptionModalLabel" style="color: #2d3748;">
-                        <i class="bi bi-file-text text-primary me-2"></i>
-                        Description complète
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="bg-light p-4" style="border-radius: 12px;">
-                        <p id="fullDescription" class="mb-0" style="line-height: 1.6;"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Scripts -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -597,7 +737,7 @@
 
             // Fonction de recherche améliorée
             const searchInput = document.getElementById('searchInput');
-            const table = document.getElementById('productsTable');
+            const table = document.getElementById('usersTable');
 
             if (searchInput && table) {
                 searchInput.addEventListener('keyup', function() {
@@ -608,7 +748,7 @@
                         let found = false;
                         const cells = rows[i].getElementsByTagName('td');
 
-                        // Rechercher dans le nom du produit (colonne 1) et la description (colonne 2)
+                        // Rechercher dans le nom (colonne 1) et l'email (colonne 2)
                         for (let j = 1; j <= 2; j++) {
                             if (cells[j]) {
                                 const textValue = cells[j].textContent || cells[j].innerText;
@@ -637,24 +777,42 @@
                     });
                 });
             }
+
+            // Gestion des formulaires de changement de rôle
+            const roleForms = document.querySelectorAll('.role-update-form');
+            roleForms.forEach(form => {
+                const select = form.querySelector('.role-select');
+                select.addEventListener('change', function() {
+                    // Ajouter une confirmation pour les changements de rôle critiques
+                    const selectedRole = this.value;
+                    const userName = this.closest('tr').querySelector('h6').textContent;
+                    
+                    if (selectedRole === 'admin') {
+                        if (!confirm(`Êtes-vous sûr de vouloir donner les droits administrateur à ${userName} ?`)) {
+                            this.value = this.defaultValue;
+                            return;
+                        }
+                    }
+                    
+                    // Désactiver le select pendant la soumission
+                    this.disabled = true;
+                    
+                    // Ajouter un indicateur de chargement
+                    const originalContent = this.innerHTML;
+                    this.innerHTML = '<option selected>Mise à jour...</option>';
+                    
+                    // Soumettre le formulaire
+                    form.submit();
+                });
+            });
         });
 
         // Fonction pour confirmer la suppression
-        function confirmDelete(productName, deleteUrl) {
-            document.getElementById('productToDelete').textContent = productName;
+        function confirmDelete(userName, deleteUrl) {
+            document.getElementById('userToDelete').textContent = userName;
             document.getElementById('deleteForm').action = deleteUrl;
 
             const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
-            modal.show();
-        }
-
-        // Fonction pour afficher la description complète
-        function showFullDescription(description, productName) {
-            document.getElementById('descriptionModalLabel').innerHTML =
-                '<i class="bi bi-file-text text-primary me-2"></i>Description - ' + productName;
-            document.getElementById('fullDescription').textContent = description;
-
-            const modal = new bootstrap.Modal(document.getElementById('descriptionModal'));
             modal.show();
         }
 
@@ -673,5 +831,52 @@
                 }, index * 200);
             });
         });
+
+        // Notification pour les changements de rôle réussis
+        @if(session('role_updated'))
+        window.addEventListener('load', function() {
+            // Créer une notification personnalisée
+            const notification = document.createElement('div');
+            notification.className = 'alert alert-success alert-modern position-fixed';
+            notification.style.cssText = `
+                top: 20px; 
+                right: 20px; 
+                z-index: 9999; 
+                min-width: 300px;
+                animation: slideInRight 0.5s ease;
+            `;
+            notification.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-check-circle me-3" style="font-size: 1.5rem;"></i>
+                    <div>
+                        <strong>Rôle mis à jour !</strong><br>
+                        <small>{{ session('role_updated') }}</small>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto-masquer après 4 secondes
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.5s ease';
+                setTimeout(() => notification.remove(), 500);
+            }, 4000);
+        });
+        @endif
+
+        // Styles pour les animations de notification
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 @endsection

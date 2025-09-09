@@ -1,10 +1,10 @@
 @extends('layouts.product')
 
-@section('title', 'Gestion des Produits')
+@section('title', 'Gestion des Catégories')
 
 @section('content')
     <style>
-        /* Styles personnalisés pour la page produits */
+        /* Styles personnalisés pour la page catégories */
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
@@ -95,12 +95,9 @@
         }
 
         @keyframes float {
-
-            0%,
-            100% {
+            0%, 100% {
                 transform: translateY(0px);
             }
-
             50% {
                 transform: translateY(-20px);
             }
@@ -164,7 +161,7 @@
             vertical-align: middle;
         }
 
-        .product-avatar {
+        .category-avatar {
             width: 50px;
             height: 50px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -175,6 +172,14 @@
             color: white;
             font-weight: 600;
             font-size: 1.1rem;
+        }
+
+        .category-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .btn-group-modern .btn {
@@ -238,14 +243,34 @@
             color: white;
         }
 
-        .price-badge {
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-            color: white;
-            padding: 0.5rem 1rem;
+        .status-badge {
+            padding: 0.4rem 0.8rem;
             border-radius: 20px;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.875rem;
             display: inline-block;
+        }
+
+        .status-active {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+        }
+
+        .status-inactive {
+            background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
+            color: white;
+        }
+
+        .order-badge {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            display: inline-block;
+            min-width: 40px;
+            text-align: center;
         }
 
         @media (max-width: 768px) {
@@ -293,10 +318,10 @@
     <div class="page-header text-center">
         <div class="container-fluid">
             <div class="float-animation mb-4">
-                <i class="bi bi-box-seam" style="font-size: 4rem; color: #667eea;"></i>
+                <i class="bi bi-grid-3x3-gap" style="font-size: 4rem; color: #667eea;"></i>
             </div>
-            <h1 class="display-4 fw-bold mb-3" style="color: #2d3748;">Gestion des Produits</h1>
-            <p class="lead" style="color: #718096;">Gérez facilement votre catalogue de produits avec style</p>
+            <h1 class="display-4 fw-bold mb-3" style="color: #2d3748;">Gestion des Catégories</h1>
+            <p class="lead" style="color: #718096;">Organisez et gérez vos catégories de produits avec élégance</p>
         </div>
     </div>
 
@@ -306,42 +331,64 @@
             <!-- Statistiques -->
             <div class="col-lg-8">
                 <div class="row">
-                    <div class="col-md-6 mb-4">
+                    <div class="col-md-4 mb-4">
                         <div class="stat-card">
                             <div class="d-flex align-items-center">
                                 <div class="flex-shrink-0 me-4">
                                     <div class="bg-primary bg-opacity-10 rounded-circle p-3">
-                                        <i class="bi bi-box text-primary" style="font-size: 2.5rem;"></i>
+                                        <i class="bi bi-grid text-primary" style="font-size: 2.5rem;"></i>
                                     </div>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <h6 class="stat-label mb-2">Total Produits</h6>
-                                    <div class="stat-number">{{ count($products) }}</div>
+                                    <h6 class="stat-label mb-2">Total Catégories</h6>
+                                    <div class="stat-number">{{ count($categories) }}</div>
                                     <small class="text-muted">
                                         <i class="bi bi-graph-up text-success me-1"></i>
-                                        Catalogue complet
+                                        Classifications
                                     </small>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-6 mb-4">
+                    <div class="col-md-4 mb-4">
                         <div class="stat-card">
                             <div class="d-flex align-items-center">
                                 <div class="flex-shrink-0 me-4">
                                     <div class="bg-success bg-opacity-10 rounded-circle p-3">
-                                        <i class="bi bi-currency-euro text-success" style="font-size: 2.5rem;"></i>
+                                        <i class="bi bi-check-circle text-success" style="font-size: 2.5rem;"></i>
                                     </div>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <h6 class="stat-label mb-2">Valeur Totale</h6>
+                                    <h6 class="stat-label mb-2">Actives</h6>
                                     <div class="stat-number">
-                                        {{ number_format($products->sum('price'), 0, ',', ' ') }} GNF
+                                        {{ $categories->where('is_active', 1)->count() }}
                                     </div>
                                     <small class="text-muted">
-                                        <i class="bi bi-trending-up text-success me-1"></i>
-                                        Inventaire valorisé
+                                        <i class="bi bi-eye text-success me-1"></i>
+                                        Visibles
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <div class="stat-card">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0 me-4">
+                                    <div class="bg-warning bg-opacity-10 rounded-circle p-3">
+                                        <i class="bi bi-eye-slash text-warning" style="font-size: 2.5rem;"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="stat-label mb-2">Inactives</h6>
+                                    <div class="stat-number">
+                                        {{ $categories->where('is_active', 0)->count() }}
+                                    </div>
+                                    <small class="text-muted">
+                                        <i class="bi bi-eye-slash text-warning me-1"></i>
+                                        Cachées
                                     </small>
                                 </div>
                             </div>
@@ -355,11 +402,11 @@
                 <div class="stat-card d-flex flex-column justify-content-center">
                     <div class="text-center">
                         <h6 class="stat-label mb-4">Actions Rapides</h6>
-                        <a href="{{ route('products.create') }}" class="btn btn-gradient-primary btn-lg mb-3 w-100">
+                        <a href="{{ route('categories.create') }}" class="btn btn-gradient-primary btn-lg mb-3 w-100">
                             <i class="bi bi-plus-circle me-2"></i>
-                            Nouveau Produit
+                            Nouvelle Catégorie
                         </a>
-                        <a href="{{ route('products.exportCSV') }}" class="btn btn-outline-secondary w-100">
+                        <a href="{{ route('categories.exportCSV') }}" class="btn btn-outline-secondary w-100">
                             <i class="bi bi-download me-2"></i>
                             Exporter en CSV
                         </a>
@@ -368,16 +415,16 @@
             </div>
         </div>
 
-        <!-- Table des produits -->
+        <!-- Table des catégories -->
         <div class="card border-0 table-modern">
             <div class="card-header bg-white border-0 py-4">
                 <div class="row align-items-center">
                     <div class="col-md-6">
                         <h3 class="card-title mb-0 fw-bold d-flex align-items-center">
                             <i class="bi bi-list-ul me-3 text-primary"></i>
-                            Liste des Produits
+                            Liste des Catégories
                             <span class="badge bg-primary bg-opacity-10 text-primary ms-3 rounded-pill px-3">
-                                {{ count($products) }}
+                                {{ count($categories) }}
                             </span>
                         </h3>
                     </div>
@@ -387,7 +434,7 @@
                                 <span class="input-group-text">
                                     <i class="bi bi-search"></i>
                                 </span>
-                                <input type="text" class="form-control" placeholder="Rechercher un produit..."
+                                <input type="text" class="form-control" placeholder="Rechercher une catégorie..."
                                     id="searchInput">
                             </div>
                         </div>
@@ -395,26 +442,30 @@
                 </div>
             </div>
 
-            @if (count($products) > 0)
+            @if (count($categories) > 0)
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0" id="productsTable">
+                        <table class="table table-hover mb-0" id="categoriesTable">
                             <thead>
                                 <tr>
                                     <th style="width: 80px;">
                                         <i class="bi bi-hash me-1"></i>ID
                                     </th>
                                     <th>
-                                        <i class="bi bi-tag me-2"></i>
-                                        Produit
+                                        <i class="bi bi-folder me-2"></i>
+                                        Catégorie
                                     </th>
                                     <th>
                                         <i class="bi bi-card-text me-2"></i>
                                         Description
                                     </th>
-                                    <th>
-                                        <i class="bi bi-currency-euro me-2"></i>
-                                        Prix
+                                    <th class="text-center" style="width: 100px;">
+                                        <i class="bi bi-arrow-up-down me-2"></i>
+                                        Ordre
+                                    </th>
+                                    <th class="text-center" style="width: 120px;">
+                                        <i class="bi bi-toggle-on me-2"></i>
+                                        Statut
                                     </th>
                                     <th class="text-center" style="width: 250px;">
                                         <i class="bi bi-gear me-2"></i>
@@ -423,28 +474,35 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($products as $product)
+                                @foreach ($categories as $category)
                                     <tr>
                                         <!-- ID -->
                                         <td>
                                             <span class="badge badge-gradient-primary rounded-pill"
                                                 style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 600;">
-                                                {{ $product->id }}
+                                                {{ $category->id }}
                                             </span>
                                         </td>
 
-                                        <!-- Produit -->
+                                        <!-- Catégorie -->
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <div class="product-avatar me-3">
-                                                    {{ strtoupper(substr($product->name, 0, 2)) }}
+                                                <div class="me-3">
+                                                    @if($category->image)
+                                                        <img src="{{ asset('storage/' . $category->image) }}" 
+                                                             alt="{{ $category->name }}" 
+                                                             class="category-image">
+                                                    @else
+                                                        <div class="category-avatar">
+                                                            {{ strtoupper(substr($category->name, 0, 2)) }}
+                                                        </div>
+                                                    @endif
                                                 </div>
                                                 <div>
-                                                    <h6 class="mb-1 fw-bold" style="color: #2d3748;">{{ $product->name }}
-                                                    </h6>
+                                                    <h6 class="mb-1 fw-bold" style="color: #2d3748;">{{ $category->name }}</h6>
                                                     <small class="text-muted d-flex align-items-center">
-                                                        <i class="bi bi-tag me-1"></i>
-                                                        SKU: {{ $product->sku ?? 'N/A' }}
+                                                        <i class="bi bi-link-45deg me-1"></i>
+                                                        {{ $category->slug }}
                                                     </small>
                                                 </div>
                                             </div>
@@ -453,53 +511,77 @@
                                         <!-- Description -->
                                         <td>
                                             <div class="description-cell">
-                                                <p class="mb-1" style="color: #4a5568;">
-                                                    {{ Str::limit($product->description, 60) }}
-                                                </p>
-                                                @if (strlen($product->description) > 60)
-                                                    <small class="text-primary" style="cursor: pointer;"
-                                                        onclick="showFullDescription('{{ addslashes($product->description) }}', '{{ $product->name }}')">
-                                                        <i class="bi bi-eye me-1"></i>Voir plus
+                                                @if($category->description)
+                                                    <p class="mb-1" style="color: #4a5568;">
+                                                        {{ Str::limit($category->description, 60) }}
+                                                    </p>
+                                                    @if (strlen($category->description) > 60)
+                                                        <small class="text-primary" style="cursor: pointer;"
+                                                            onclick="showFullDescription('{{ addslashes($category->description) }}', '{{ $category->name }}')">
+                                                            <i class="bi bi-eye me-1"></i>Voir plus
+                                                        </small>
+                                                    @endif
+                                                @else
+                                                    <small class="text-muted">
+                                                        <i class="bi bi-dash me-1"></i>Aucune description
                                                     </small>
                                                 @endif
                                             </div>
                                         </td>
 
-                                        <!-- Prix -->
-                                        <td>
-                                            <span class="price-badge">
-                                                {{ number_format($product->price, 0, ',', ' ') }} GNF
+                                        <!-- Ordre -->
+                                        <td class="text-center">
+                                            <span class="order-badge">
+                                                {{ $category->order }}
                                             </span>
+                                        </td>
+
+                                        <!-- Statut -->
+                                        <td class="text-center">
+                                            @if($category->is_active)
+                                                <span class="status-badge status-active">
+                                                    <i class="bi bi-check-circle me-1"></i>Active
+                                                </span>
+                                            @else
+                                                <span class="status-badge status-inactive">
+                                                    <i class="bi bi-x-circle me-1"></i>Inactive
+                                                </span>
+                                            @endif
                                         </td>
 
                                         <!-- Actions -->
                                         <td>
                                             <div class="btn-group-modern d-flex justify-content-center" role="group">
                                                 <!-- Voir -->
-                                                <a href="{{ route('products.show', $product) }}"
+                                                <a href="{{ route('categories.show', $category) }}"
                                                     class="btn btn-outline-primary btn-sm" title="Voir les détails"
                                                     data-bs-toggle="tooltip">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
 
                                                 <!-- Modifier -->
-                                                <a href="{{ route('products.edit', $product) }}"
+                                                <a href="{{ route('categories.edit', $category) }}"
                                                     class="btn btn-outline-warning btn-sm" title="Modifier"
                                                     data-bs-toggle="tooltip">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
 
-                                                <!-- Exporter CSV -->
-                                                <a href="{{ route('products.exportCSVWithId', $product) }}"
-                                                    class="btn btn-outline-info btn-sm" title="Exporter en CSV"
-                                                    data-bs-toggle="tooltip">
-                                                    <i class="bi bi-file-earmark-spreadsheet"></i>
-                                                </a>
+                                                <!-- Toggle Status -->
+                                                <form method="POST" action="{{ route('categories.toggleStatus', $category) }}" style="display: inline;">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit" 
+                                                            class="btn btn-outline-info btn-sm" 
+                                                            title="{{ $category->is_active ? 'Désactiver' : 'Activer' }}"
+                                                            data-bs-toggle="tooltip">
+                                                        <i class="bi bi-{{ $category->is_active ? 'eye-slash' : 'eye' }}"></i>
+                                                    </button>
+                                                </form>
 
                                                 <!-- Supprimer -->
                                                 <button type="button" class="btn btn-outline-danger btn-sm"
                                                     title="Supprimer" data-bs-toggle="tooltip"
-                                                    onclick="confirmDelete('{{ $product->name }}', '{{ route('products.destroy', $product) }}')">
+                                                    onclick="confirmDelete('{{ $category->name }}', '{{ route('categories.destroy', $category) }}')">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </div>
@@ -514,14 +596,13 @@
                 <!-- État vide -->
                 <div class="empty-state">
                     <div class="empty-state-icon">
-                        <i class="bi bi-inbox"></i>
+                        <i class="bi bi-folder-x"></i>
                     </div>
-                    <h3 class="fw-bold mb-3" style="color: #4a5568;">Aucun produit trouvé</h3>
-                    <p class="text-muted mb-4 fs-5">Commencez par créer votre premier produit pour voir apparaître votre
-                        catalogue ici.</p>
-                    <a href="{{ route('products.create') }}" class="btn btn-gradient-primary btn-lg">
+                    <h3 class="fw-bold mb-3" style="color: #4a5568;">Aucune catégorie trouvée</h3>
+                    <p class="text-muted mb-4 fs-5">Commencez par créer votre première catégorie pour organiser vos produits.</p>
+                    <a href="{{ route('categories.create') }}" class="btn btn-gradient-primary btn-lg">
                         <i class="bi bi-plus-circle me-2"></i>
-                        Créer mon premier produit
+                        Créer ma première catégorie
                     </a>
                 </div>
             @endif
@@ -540,12 +621,12 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body pt-2">
-                    <p class="text-muted mb-4">Êtes-vous sûr de vouloir supprimer le produit <strong
-                            id="productToDelete"></strong> ?</p>
+                    <p class="text-muted mb-4">Êtes-vous sûr de vouloir supprimer la catégorie <strong
+                            id="categoryToDelete"></strong> ?</p>
                     <div class="alert alert-warning border-0"
                         style="border-radius: 12px; background: rgba(255, 193, 7, 0.1);">
                         <i class="bi bi-info-circle text-warning me-2"></i>
-                        Cette action est irréversible.
+                        Cette action est irréversible et peut affecter les produits associés.
                     </div>
                 </div>
                 <div class="modal-footer border-0 pt-0">
@@ -597,7 +678,7 @@
 
             // Fonction de recherche améliorée
             const searchInput = document.getElementById('searchInput');
-            const table = document.getElementById('productsTable');
+            const table = document.getElementById('categoriesTable');
 
             if (searchInput && table) {
                 searchInput.addEventListener('keyup', function() {
@@ -608,7 +689,7 @@
                         let found = false;
                         const cells = rows[i].getElementsByTagName('td');
 
-                        // Rechercher dans le nom du produit (colonne 1) et la description (colonne 2)
+                        // Rechercher dans le nom de la catégorie (colonne 1) et la description (colonne 2)
                         for (let j = 1; j <= 2; j++) {
                             if (cells[j]) {
                                 const textValue = cells[j].textContent || cells[j].innerText;
@@ -640,8 +721,8 @@
         });
 
         // Fonction pour confirmer la suppression
-        function confirmDelete(productName, deleteUrl) {
-            document.getElementById('productToDelete').textContent = productName;
+        function confirmDelete(categoryName, deleteUrl) {
+            document.getElementById('categoryToDelete').textContent = categoryName;
             document.getElementById('deleteForm').action = deleteUrl;
 
             const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
@@ -649,9 +730,9 @@
         }
 
         // Fonction pour afficher la description complète
-        function showFullDescription(description, productName) {
+        function showFullDescription(description, categoryName) {
             document.getElementById('descriptionModalLabel').innerHTML =
-                '<i class="bi bi-file-text text-primary me-2"></i>Description - ' + productName;
+                '<i class="bi bi-file-text text-primary me-2"></i>Description - ' + categoryName;
             document.getElementById('fullDescription').textContent = description;
 
             const modal = new bootstrap.Modal(document.getElementById('descriptionModal'));

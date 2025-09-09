@@ -57,16 +57,6 @@ class Order extends Model
 
 	protected $table = 'orders';
 
-	protected $casts = [
-		'subtotal' => 'float',
-		'tax_amount' => 'float',
-		'shipping_cost' => 'float',
-		'discount_amount' => 'float',
-		'total_amount' => 'float',
-		'shipped_at' => 'datetime',
-		'delivered_at' => 'datetime',
-	];
-
 	protected $fillable = [
 		'order_number',
 		'user_id',
@@ -99,6 +89,17 @@ class Order extends Model
 		'session_id',
 	];
 
+	protected $casts = [
+		'subtotal' => 'float',
+		'tax_amount' => 'float',
+		'shipping_cost' => 'float',
+		'discount_amount' => 'float',
+		'total_amount' => 'float',
+		'shipped_at' => 'datetime',
+		'delivered_at' => 'datetime',
+	];
+
+
 	// Relations
 	public function orderItems(): HasMany
 	{
@@ -114,6 +115,12 @@ class Order extends Model
 	{
 		return $this->belongsTo(User::class);
 	}
+
+	public function reviews(): HasMany
+	{
+		return $this->hasMany(OrderReview::class);
+	}
+
 
 	// Méthodes utiles
 	public function getTotalItemsAttribute(): int

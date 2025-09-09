@@ -1,9 +1,9 @@
 @extends('layouts.product')
 
-@section('title', $product->name)
+@section('title', $category->name)
 
 @section('content')
-<style>
+    <style>
         /* Styles personnalisés pour l'affichage de catégorie */
         .detail-card {
             background: white;
@@ -480,14 +480,14 @@
         <nav aria-label="breadcrumb" class="breadcrumb-modern">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
-                    <a href="{{ route('products.index') }}">
-                        <i class="bi bi-box-seam me-1"></i>
-                        Produits
+                    <a href="{{ route('categories.index') }}">
+                        <i class="bi bi-grid-3x3-gap me-1"></i>
+                        Catégories
                     </a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
                     <i class="bi bi-eye me-1"></i>
-                    {{ $product->name }}
+                    {{ $category->name }}
                 </li>
             </ol>
         </nav>
@@ -499,10 +499,10 @@
                     <!-- Header -->
                     <div class="detail-header">
                         <div class="detail-icon">
-                            <i class="bi bi-bag"></i>
+                            <i class="bi bi-folder-open"></i>
                         </div>
-                        <h1>{{ $product->name }}</h1>
-                        <p class="subtitle">{{ $product->short_description ?? 'Aucune description courte' }}</p>
+                        <h1>{{ $category->name }}</h1>
+                        <p class="subtitle">Détails de la catégorie</p>
                     </div>
 
                     <!-- Corps -->
@@ -511,51 +511,45 @@
                         <div class="info-grid">
                             <div class="info-item">
                                 <div class="info-label">
-                                    <i class="bi bi-currency-euro me-1"></i>
-                                    Prix
+                                    <i class="bi bi-tag me-1"></i>
+                                    Nom
                                 </div>
-                                <div class="info-value">
-                                    {{ number_format($product->price, 0, ',', ' ') }} GNF
-                                    @if($product->old_price)
-                                        <small class="text-muted text-decoration-line-through ms-2">
-                                            {{ number_format($product->old_price, 2, ',', ' ') }} €
-                                        </small>
-                                    @endif
-                                </div>
+                                <div class="info-value">{{ $category->name }}</div>
                             </div>
-
-                            @if($product->discount_percentage)
-                                <div class="info-item">
-                                    <div class="info-label">
-                                        <i class="bi bi-percent me-1"></i>
-                                        Remise
-                                    </div>
-                                    <div class="info-value text-success">-{{ $product->discount_percentage }}%</div>
-                                </div>
-                            @endif
 
                             <div class="info-item">
                                 <div class="info-label">
-                                    <i class="bi bi-box-seam me-1"></i>
-                                    Stock
+                                    <i class="bi bi-link-45deg me-1"></i>
+                                    Slug (URL)
+                                </div>
+                                <div class="info-value slug">{{ $category->slug }}</div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-label">
+                                    <i class="bi bi-arrow-up-down me-1"></i>
+                                    Ordre d'affichage
+                                </div>
+                                <div class="info-value">{{ $category->order }}</div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-label">
+                                    <i class="bi bi-eye me-1"></i>
+                                    Statut
                                 </div>
                                 <div class="info-value">
-                                    {{ $product->stock_quantity }} 
-                                    @if($product->in_stock)
-                                        <span class="badge bg-success ms-2">En stock</span>
+                                    @if($category->is_active)
+                                        <span class="status-badge status-active">
+                                            <i class="bi bi-check-circle me-1"></i>
+                                            Active
+                                        </span>
                                     @else
-                                        <span class="badge bg-danger ms-2">Rupture</span>
+                                        <span class="status-badge status-inactive">
+                                            <i class="bi bi-x-circle me-1"></i>
+                                            Inactive
+                                        </span>
                                     @endif
-                                </div>
-                            </div>
-
-                            <div class="info-item">
-                                <div class="info-label">
-                                    <i class="bi bi-star-fill me-1"></i>
-                                    Avis
-                                </div>
-                                <div class="info-value">
-                                    {{ $product->rating }}/5 ({{ $product->review_count }} avis)
                                 </div>
                             </div>
                         </div>
@@ -564,14 +558,14 @@
                         <div class="image-section">
                             <h3 class="mb-3">
                                 <i class="bi bi-image me-2"></i>
-                                Image du produit
+                                Image de la catégorie
                             </h3>
-                            @if($product->image)
-                                <img src="{{ Storage::url($product->image) }}" 
-                                     alt="{{ $product->name }}" 
+                            @if($category->image)
+                                <img src="{{ Storage::url($category->image) }}" 
+                                     alt="{{ $category->name }}" 
                                      class="img-fluid">
                                 <div class="mt-2">
-                                    <small class="text-muted">{{ basename($product->image) }}</small>
+                                    <small class="text-muted">{{ basename($category->image) }}</small>
                                 </div>
                             @else
                                 <div class="no-image">
@@ -585,10 +579,10 @@
                         <div class="description-section">
                             <h3>
                                 <i class="bi bi-card-text"></i>
-                                Description détaillée
+                                Description
                             </h3>
-                            @if($product->description)
-                                <p class="description-text">{{ $product->description }}</p>
+                            @if($category->description)
+                                <p class="description-text">{{ $category->description }}</p>
                             @else
                                 <p class="no-description">Aucune description fournie</p>
                             @endif
@@ -597,15 +591,15 @@
 
                     <!-- Actions -->
                     <div class="action-buttons">
-                        <a href="{{ route('products.index') }}" class="btn btn-outline-secondary">
+                        <a href="{{ route('categories.index') }}" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left me-2"></i>
                             Retour à la liste
                         </a>
-                        <a href="{{ route('products.edit', $product) }}" class="btn btn-gradient-warning">
+                        <a href="{{ route('categories.edit', $category) }}" class="btn btn-gradient-warning">
                             <i class="bi bi-pencil me-2"></i>
                             Modifier
                         </a>
-                        <form action="{{ route('products.destroy', $product) }}" method="POST" style="display: inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">
+                        <form action="{{ route('categories.destroy', $category) }}" method="POST" style="display: inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?')">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-gradient-danger">
@@ -626,20 +620,12 @@
                     </h3>
                     <div class="stats-grid">
                         <div class="stat-item">
-                            <div class="stat-number">{{ $product->rating }}</div>
-                            <div class="stat-label">Note moyenne</div>
+                            <div class="stat-number">{{ $category->products_count ?? 0 }}</div>
+                            <div class="stat-label">Produits</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-number">{{ $product->review_count }}</div>
-                            <div class="stat-label">Avis clients</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">{{ $product->in_stock ? '✓' : '✗' }}</div>
-                            <div class="stat-label">Disponibilité</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">{{ $product->is_featured ? '★' : '-' }}</div>
-                            <div class="stat-label">Mis en avant</div>
+                            <div class="stat-number">{{ $category->is_active ? '✓' : '✗' }}</div>
+                            <div class="stat-label">Statut</div>
                         </div>
                     </div>
                 </div>
@@ -655,18 +641,18 @@
                             <i class="bi bi-plus-circle"></i>
                         </div>
                         <div class="timeline-content">
-                            <div class="timeline-action">Produit créé</div>
-                            <div class="timeline-date">{{ $product->created_at->format('d/m/Y à H:i') }}</div>
+                            <div class="timeline-action">Catégorie créée</div>
+                            <div class="timeline-date">{{ $category->created_at->format('d/m/Y à H:i') }}</div>
                         </div>
                     </div>
-                    @if($product->updated_at != $product->created_at)
+                    @if($category->updated_at != $category->created_at)
                         <div class="timeline-item">
                             <div class="timeline-icon">
                                 <i class="bi bi-pencil"></i>
                             </div>
                             <div class="timeline-content">
                                 <div class="timeline-action">Dernière modification</div>
-                                <div class="timeline-date">{{ $product->updated_at->format('d/m/Y à H:i') }}</div>
+                                <div class="timeline-date">{{ $category->updated_at->format('d/m/Y à H:i') }}</div>
                             </div>
                         </div>
                     @endif
@@ -684,51 +670,26 @@
                         </div>
                         <div class="timeline-content">
                             <div class="timeline-action">ID</div>
-                            <div class="timeline-date">#{{ $product->id }}</div>
+                            <div class="timeline-date">#{{ $category->id }}</div>
                         </div>
                     </div>
                     <div class="timeline-item">
                         <div class="timeline-icon">
-                            <i class="bi bi-upc-scan"></i>
+                            <i class="bi bi-calendar-plus"></i>
                         </div>
                         <div class="timeline-content">
-                            <div class="timeline-action">SKU</div>
-                            <div class="timeline-date">{{ $product->sku }}</div>
+                            <div class="timeline-action">Créé le</div>
+                            <div class="timeline-date">{{ $category->created_at->format('d/m/Y') }}</div>
                         </div>
                     </div>
-                    @if($product->brand)
+                    @if($category->updated_at != $category->created_at)
                         <div class="timeline-item">
                             <div class="timeline-icon">
-                                <i class="bi bi-tag"></i>
+                                <i class="bi bi-calendar-check"></i>
                             </div>
                             <div class="timeline-content">
-                                <div class="timeline-action">Marque</div>
-                                <div class="timeline-date">{{ $product->brand }}</div>
-                            </div>
-                        </div>
-                    @endif
-                    @if($product->weight || $product->dimensions)
-                        <div class="timeline-item">
-                            <div class="timeline-icon">
-                                <i class="bi bi-box"></i>
-                            </div>
-                            <div class="timeline-content">
-                                <div class="timeline-action">Caractéristiques</div>
-                                <div class="timeline-date">
-                                    {{ $product->weight ? $product->weight . ' kg' : '' }}
-                                    {{ $product->dimensions ? ' - ' . $product->dimensions : '' }}
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                    @if($product->category)
-                        <div class="timeline-item">
-                            <div class="timeline-icon">
-                                <i class="bi bi-folder"></i>
-                            </div>
-                            <div class="timeline-content">
-                                <div class="timeline-action">Catégorie</div>
-                                <div class="timeline-date">{{ $product->category->name }}</div>
+                                <div class="timeline-action">Modifié le</div>
+                                <div class="timeline-date">{{ $category->updated_at->format('d/m/Y') }}</div>
                             </div>
                         </div>
                     @endif
@@ -736,4 +697,63 @@
             </div>
         </div>
     </div>
+
+    <!-- Actions flottantes (desktop uniquement) -->
+    <div class="floating-actions">
+        {{-- <a href="{{ route('categories.edit', $category) }}" class="floating-btn edit" title="Modifier">
+            <i class="bi bi-pencil"></i>
+        </a> --}}
+        <button type="button" class="floating-btn delete" title="Supprimer" onclick="confirmDelete()">
+            <i class="bi bi-trash"></i>
+        </button>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        function confirmDelete() {
+            if (confirm('Êtes-vous sûr de vouloir supprimer la catégorie "{{ $category->name }}" ?\n\nCette action est irréversible.')) {
+                // Créer un formulaire de suppression
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ route('categories.destroy', $category) }}';
+                
+                // Ajouter le token CSRF
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = '_token';
+                csrfInput.value = '{{ csrf_token() }}';
+                
+                // Ajouter la méthode DELETE
+                const methodInput = document.createElement('input');
+                methodInput.type = 'hidden';
+                methodInput.name = '_method';
+                methodInput.value = 'DELETE';
+                
+                form.appendChild(csrfInput);
+                form.appendChild(methodInput);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        // Animation au scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+
+            // Observer tous les éléments avec animation
+            document.querySelectorAll('.info-item, .timeline-item').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'all 0.6s ease';
+                observer.observe(el);
+            });
+        });
+    </script>
 @endsection

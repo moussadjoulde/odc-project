@@ -7,8 +7,10 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OAuth\SocialAuthController;
+use App\Http\Controllers\OrderAdminController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\WishListController;
 use App\Livewire\ProductShow;
 use App\Models\Product;
@@ -30,23 +32,76 @@ Route::middleware(['auth', 'role:admin', 'verified'])->group(function () {
 
     Route::prefix('admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-        Route::get('/products', [AdminController::class, 'productsIndex'])->name('admin.products.index');
-    });
+        // Route::get('/products', [AdminController::class, 'productsIndex'])->name('admin.products.index');
+        Route::resource('products', ProductController::class);
+        Route::resource('categories', CategoryController::class);
+        Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+        Route::get('categories/export/csv', [CategoryController::class, 'exportCSV'])->name('categories.exportCSV');
+        Route::patch('categories/{category}/toggle-status', [CategoryController::class, 'toggleStatus'])->name('categories.toggleStatus');
+        Route::resource('users', UserController::class);
+        // Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
+        Route::patch('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggleStatus');
+        Route::post('users/{user}/revoke-permissions', [UserController::class, 'revokeAllPermissions'])->name('users.revokeAllPermissions');
+        Route::patch('users/{user}/role', [UserController::class, 'updateRole'])->name('users.updateRole');
+        Route::post('users/{user}/verification', [UserController::class, 'sendVerification'])->name('users.sendVerification');
+        Route::get('users/export/csv', [UserController::class, 'exportCSV'])->name('users.exportCSV');
+        Route::post('/users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.resetPassword');
+        Route::patch('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggleStatus');
 
-    //Order Management
-    Route::resource('orders', OrderController::class);
-    Route::get('orders/export/csv', [OrderController::class, 'exportCSV'])->name('orders.exportCSV');
-    Route::get('orders/{id}/export/csv', [OrderController::class, 'exportCSVWithId'])->name('orders.exportCSVWithId');
-    
+        Route::get('/orders', [OrderAdminController::class, 'index'])->name('orders.admin.index');
+        Route::get('/orders/create', [OrderAdminController::class, 'create'])->name('orders.admin.create');
+        Route::post('/orders', [OrderAdminController::class, 'store'])->name('orders.admin.store');
+        Route::get('/orders/{order}', [OrderAdminController::class, 'show'])->name('orders.admin.show');
+        Route::get('/orders/{order}/edit', [OrderAdminController::class, 'edit'])->name('orders.admin.edit');
+        Route::get('/orders/{order}/update', [OrderAdminController::class, 'update'])->name('orders.admin.update');
+        Route::delete('/orders/{order}', [OrderAdminController::class, 'destroy'])->name('orders.admin.destroy');
+        Route::get('/orders/export/csv', [OrderAdminController::class, 'exportCSV'])->name('orders.admin.exportCSV');
+        Route::get('/orders/{order}/print', [OrderAdminController::class, 'print'])->name('orders.admin.print');
+        Route::patch('/orders/{order}/status', [OrderAdminController::class, 'updateStatus'])->name('orders.admin.updateStatus');
+    });
 });
 
-Auth::routes();
+Auth::routes(['verify' => true]);
 
 Route::get('auth/{provider}', [SocialAuthController::class, 'redirect'])->name('oauth.redirect');
 Route::get('auth/callback/{provider}', [SocialAuthController::class, 'callback']);
 
 Route::middleware(['auth', 'verified'])->group(
     function () {
+        // Page principale des commandes avec Livewire
+        // Route::get('/my-orders', function () {
+        //     return view('orders.index');
+        // })->name('orders.index');
+
+        // Route alternative si vous voulez utiliser un contrôleur
+        Route::get('/my-orders', [OrderController::class, 'index'])->name('orders.index');
+
+        // Détails d'une commande spécifique
+        Route::get('/orders/{order}', [OrderController::class, 'show'])
+            ->name('orders.show'); // Politique pour s'assurer que l'utilisateur peut voir cette commande
+
+        Route::get('/orders/{order}/edit', [OrderController::class, 'edit'])
+            ->name('orders.edit')
+            ->middleware('can:update,order'); // si tu veux protéger
+        Route::put('/orders/{order}', [OrderController::class, 'update'])
+            ->name('orders.update')
+            ->middleware('can:update,order');
+
+        // Routes API pour les actions Livewire (optionnel - Livewire gère automatiquement)
+        Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])
+            ->name('orders.cancel')
+            ->middleware('can:cancel,order');
+
+        // Route pour le processus de paiement
+        Route::get('/payment/{order}/process', [OrderController::class, 'processPayment'])
+            ->name('payment.process')
+            ->middleware('can:pay,order');
+
+        // Routes pour les avis (si implémentées)
+        Route::post('/orders/{order}/review', [OrderController::class, 'storeReview'])
+            ->name('orders.review.store')
+            ->middleware('can:review,order');
+
         // Profile
         Route::name('profile.')->group(function () {
             Route::get('/profile', [ProfileController::class, 'index'])->name('index');

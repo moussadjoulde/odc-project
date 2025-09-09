@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Administration E-commerce</title>
+    <title>{{ config('app.name', 'Laravel') }}</title> 
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     
     <!-- Bootstrap 5.3 CSS -->
@@ -22,6 +22,7 @@
     <style>
         
     </style>
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 <body>
     <!-- Header d'administration -->

@@ -273,9 +273,23 @@ class ProductFilter extends Component
     {
         $query = Product::query();
 
-        // Filtrer par catégorie
-        if ($this->category !== 'all') {
-            $query->where('category_id', $this->category);
+        // Vérifier si l'utilisateur a des favoris
+        if (!empty($this->userWishList)) {
+            // Récupérer les catégories et marques des favoris
+            $favoriteProducts = Product::whereIn('id', $this->userWishList)->get();
+            $favoriteCategories = $favoriteProducts->pluck('category_id')->unique()->toArray();
+            $favoriteBrands = $favoriteProducts->pluck('brand')->unique()->toArray();
+
+            // Suggérer des produits similaires aux favoris
+            $query->where(function ($q) use ($favoriteCategories, $favoriteBrands) {
+                $q->whereIn('category_id', $favoriteCategories)
+                    ->orWhereIn('brand', $favoriteBrands);
+            });
+        } else {
+            // Filtrer par catégorie si l'utilisateur n'a pas de favoris
+            if ($this->category !== 'all') {
+                $query->where('category_id', $this->category);
+            }
         }
 
         // Filtrer par prix
@@ -303,12 +317,10 @@ class ProductFilter extends Component
                 $query->orderBy('price', 'desc');
                 break;
             case 'rating':
-                $query->orderBy('rating', 'desc')
-                    ->orderBy('review_count', 'desc');
+                $query->orderBy('rating', 'desc')->orderBy('review_count', 'desc');
                 break;
             case 'popular':
-                $query->orderBy('review_count', 'desc')
-                    ->orderBy('rating', 'desc');
+                $query->orderBy('review_count', 'desc')->orderBy('rating', 'desc');
                 break;
             case 'newest':
             default:

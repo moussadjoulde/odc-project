@@ -71,7 +71,7 @@
                             <a class="dropdown-item" href="{{ route('profile.index') }}">
                                 <i class="bi bi-person-circle me-2"></i>Mon Profil
                             </a>
-                            <a class="dropdown-item" href="{{ url('/orders') }}">
+                            <a class="dropdown-item" href="{{ route('orders.index') }}">
                                 <i class="bi bi-bag-check me-2"></i>Mes Commandes
                             </a>
                             <a class="dropdown-item" href="{{ url('/wishlist') }}">

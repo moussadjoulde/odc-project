@@ -186,12 +186,14 @@
                                         <div class="product-badge">Nouveau</div>
                                     @endif
 
-                                    <button
-                                        class="wishlist-btn {{ $this->isInWishList($product->id) ? 'active' : '' }}"
-                                        wire:click="toggleWishList({{ $product->id }})">
-                                        <i
-                                            class="bi bi-heart{{ $this->isInWishList($product->id) ? '-fill' : '' }}"></i>
-                                    </button>
+                                    @if (auth()->check())
+                                        <button
+                                            class="wishlist-btn {{ $this->isInWishList($product->id) ? 'active' : '' }}"
+                                            wire:click="toggleWishList({{ $product->id }})">
+                                            <i
+                                                class="bi bi-heart{{ $this->isInWishList($product->id) ? '-fill' : '' }}"></i>
+                                        </button>
+                                    @endif
 
                                     <div class="product-overlay">
                                         <button class="btn-quick-view">

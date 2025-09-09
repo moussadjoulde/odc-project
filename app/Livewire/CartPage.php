@@ -98,6 +98,12 @@ class CartPage extends Component
     public function placeOrder()
     {
         try {
+            // dd('Méthode exécutée');
+
+            if (!Auth::check()) {
+                return redirect()->route('login');
+            }
+
             if (count($this->cartItems) == 0) {
                 $this->dispatch('showToast', [
                     'type' => 'warning',
@@ -108,25 +114,46 @@ class CartPage extends Component
 
             $user = Auth::user();
 
+            // Vérification des données obligatoires
+            // if (empty($user->address) || empty($user->city)) {
+            //     $this->dispatch('showToast', [
+            //         'type' => 'error',
+            //         'message' => 'Veuillez compléter votre adresse et ville dans votre profil.'
+            //     ]);
+            //     return;
+            // }
+
             // Création de la commande
             $order = Order::create([
-                'order_number'     => strtoupper(Str::random(10)),
                 'user_id'          => $user->id,
                 'customer_name'    => $user->name,
                 'customer_email'   => $user->email,
                 'customer_phone'   => $user->phone ?? null,
                 'shipping_address' => $user->address ?? 'Adresse non renseignée',
                 'shipping_city'    => $user->city ?? 'Ville',
+                'shipping_country' => 'Guinée', // par défaut
+                'subtotal'         => $this->cartItems->sum(fn($i) => $i->price * $i->quantity),
+                'tax_amount'       => 0,
+                'shipping_cost'    => 0,
+                'discount_amount'  => 0,
+                'total_amount'     => $this->cartItems->sum(fn($i) => $i->price * $i->quantity),
                 'status'           => 'pending',
+                'payment_status'   => 'pending',
+                'shipping_method'  => 'standard',
             ]);
 
             // Sauvegarde des items du panier dans order_items
             foreach ($this->cartItems as $item) {
                 OrderItem::create([
-                    'order_id'   => $order->id,
-                    'product_id' => $item->product_id,
-                    'price'      => $item->price,
-                    'quantity'   => $item->quantity,
+                    'order_id'       => $order->id,
+                    'product_id'     => $item->product_id,
+                    'product_name'   => $item->product->name ?? '',   // si tu as la relation
+                    'product_sku'    => $item->product->sku ?? null, // si dispo
+                    'unit_price'     => $item->price,
+                    'quantity'       => $item->quantity,
+                    'total_price'    => $item->price * $item->quantity,
+                    'product_image'  => $item->product->image ?? null,
+                    'product_options' => [], // ou infos du panier si tu en as
                 ]);
             }
 
@@ -134,13 +161,17 @@ class CartPage extends Component
             Cart::clearCart();
             $this->refreshCart();
 
+            // Toast côté Livewire
             $this->dispatch('showToast', [
                 'type' => 'success',
                 'message' => 'Commande passée avec succès !'
             ]);
 
-            // Redirection optionnelle vers une page "merci"
-            return redirect()->to('/orders/' . $order->id);
+            // Flash Laravel
+            session()->flash('success', 'Votre commande a bien été enregistrée !');
+
+            // Redirection Livewire 3
+            return $this->redirectRoute('orders.index', ['order' => $order->id], navigate: true);
         } catch (\Exception $e) {
             $this->dispatch('showToast', [
                 'type' => 'error',
@@ -148,7 +179,6 @@ class CartPage extends Component
             ]);
         }
     }
-
 
     public function render()
     {

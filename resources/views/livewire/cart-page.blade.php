@@ -267,9 +267,10 @@
                                 </div>
 
                                 <div class="d-grid gap-3">
-                                    <button class="btn btn-modern btn-lg rounded-pill">
-                                        <i class="bi bi-credit-card me-2" wire:click="placeOrder"></i>Passer la commande
+                                    <button wire:click="placeOrder" class="btn btn-modern btn-lg rounded-pill">
+                                        <i class="bi bi-credit-card me-2"></i> Passer la commande
                                     </button>
+
                                     <button class="btn btn-outline-primary btn-lg rounded-pill">
                                         <i class="bi bi-paypal me-2"></i>PayPal Express
                                     </button>
