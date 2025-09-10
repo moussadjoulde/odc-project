@@ -337,7 +337,7 @@
                     <div class="stat-icon info">
                         <i class="bi bi-box"></i>
                     </div>
-                    <h3 class="stat-number">{{ {{ $products->count() }} }}</h3>
+                    <h3 class="stat-number">{{ $products->count() }}</h3>
                     <p class="stat-label">Produits</p>
                     <div class="stat-change positive">
                         <i class="bi bi-arrow-up me-1"></i>
