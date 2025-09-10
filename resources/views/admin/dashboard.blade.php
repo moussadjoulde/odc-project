@@ -323,7 +323,7 @@
                     <div class="stat-icon warning">
                         <i class="bi bi-people"></i>
                     </div>
-                    <h3 class="stat-number">{{ $users->count() }}</h3>
+                    <h3 class="stat-number">3</h3>
                     <p class="stat-label">Clients actifs</p>
                     <div class="stat-change positive">
                         <i class="bi bi-arrow-up me-1"></i>
