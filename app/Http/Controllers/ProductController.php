@@ -102,6 +102,7 @@ class ProductController extends Controller
     public function update(ProductUpdateRequest $request, string $id)
     {
         $validated = $request->validated();
+        $validated['image'] = $request->file('image')->store('products', 'public');
         Product::where('id', $id)->update($validated);
         return redirect()->route('products.index')->with('success', 'Product updated successfully.');
     }

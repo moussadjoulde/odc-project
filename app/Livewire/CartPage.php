@@ -6,7 +6,7 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class CartPage extends Component
@@ -98,12 +98,16 @@ class CartPage extends Component
     public function placeOrder()
     {
         try {
-            // dd('Méthode exécutée');
-
+            // Vérifier l'authentification
             if (!Auth::check()) {
-                return redirect()->route('login');
+                $this->dispatch('showToast', [
+                    'type' => 'warning',
+                    'message' => 'Vous devez être connecté pour passer commande.'
+                ]);
+                return $this->redirectRoute('login');
             }
 
+            // Vérifier que le panier n'est pas vide
             if (count($this->cartItems) == 0) {
                 $this->dispatch('showToast', [
                     'type' => 'warning',
@@ -114,68 +118,99 @@ class CartPage extends Component
 
             $user = Auth::user();
 
-            // Vérification des données obligatoires
-            // if (empty($user->address) || empty($user->city)) {
-            //     $this->dispatch('showToast', [
-            //         'type' => 'error',
-            //         'message' => 'Veuillez compléter votre adresse et ville dans votre profil.'
-            //     ]);
-            //     return;
-            // }
+            // Utiliser une transaction pour garantir la cohérence
+            DB::beginTransaction();
 
-            // Création de la commande
-            $order = Order::create([
-                'user_id'          => $user->id,
-                'customer_name'    => $user->name,
-                'customer_email'   => $user->email,
-                'customer_phone'   => $user->phone ?? null,
-                'shipping_address' => $user->address ?? 'Adresse non renseignée',
-                'shipping_city'    => $user->city ?? 'Ville',
-                'shipping_country' => 'Guinée', // par défaut
-                'subtotal'         => $this->cartItems->sum(fn($i) => $i->price * $i->quantity),
-                'tax_amount'       => 0,
-                'shipping_cost'    => 0,
-                'discount_amount'  => 0,
-                'total_amount'     => $this->cartItems->sum(fn($i) => $i->price * $i->quantity),
-                'status'           => 'pending',
-                'payment_status'   => 'pending',
-                'shipping_method'  => 'standard',
-            ]);
+            try {
+                // Calculer les totaux
+                $subtotal = $this->cartItems->sum(fn($i) => $i->price * $i->quantity);
+                $shippingCost = $subtotal >= 50 ? 0 : 4.99;
+                $totalAmount = $subtotal + $shippingCost;
 
-            // Sauvegarde des items du panier dans order_items
-            foreach ($this->cartItems as $item) {
-                OrderItem::create([
-                    'order_id'       => $order->id,
-                    'product_id'     => $item->product_id,
-                    'product_name'   => $item->product->name ?? '',   // si tu as la relation
-                    'product_sku'    => $item->product->sku ?? null, // si dispo
-                    'unit_price'     => $item->price,
-                    'quantity'       => $item->quantity,
-                    'total_price'    => $item->price * $item->quantity,
-                    'product_image'  => $item->product->image ?? null,
-                    'product_options' => [], // ou infos du panier si tu en as
+                // Création de la commande
+                $order = Order::create([
+                    'user_id'          => $user->id,
+                    'customer_name'    => $user->name,
+                    'customer_email'   => $user->email,
+                    'customer_phone'   => $user->phone ?? null,
+                    'shipping_address' => $user->address ?? 'Adresse à compléter',
+                    'shipping_city'    => $user->city ?? 'Ville à compléter',
+                    'shipping_country' => 'Guinée',
+                    'subtotal'         => $subtotal,
+                    'tax_amount'       => 0,
+                    'shipping_cost'    => $shippingCost,
+                    'discount_amount'  => 0,
+                    'total_amount'     => $totalAmount,
+                    'status'           => 'pending',
+                    'payment_status'   => 'pending',
+                    'shipping_method'  => 'standard',
+                    'order_number'     => 'CMD-' . now()->format('Ymd') . '-' . str_pad($user->id, 4, '0', STR_PAD_LEFT) . '-' . rand(1000, 9999),
                 ]);
+
+                // Sauvegarde des items du panier dans order_items
+                foreach ($this->cartItems as $item) {
+                    OrderItem::create([
+                        'order_id'        => $order->id,
+                        'product_id'      => $item->product_id,
+                        'product_name'    => $item->product->name ?? '',
+                        'product_sku'     => $item->product->sku ?? null,
+                        'unit_price'      => $item->price,
+                        'quantity'        => $item->quantity,
+                        'total_price'     => $item->price * $item->quantity,
+                        'product_image'   => $item->product->image ?? null,
+                        'product_options' => json_encode([]), // Si vous avez des options de produit
+                    ]);
+                }
+
+                // Vider le panier AVANT la redirection
+                Cart::clearCart();
+
+                // Valider la transaction
+                DB::commit();
+
+                // Rafraîchir l'état du composant
+                $this->refreshCart();
+
+                // Émettre l'événement pour mettre à jour l'indicateur du panier
+                $this->dispatch('cartUpdated');
+
+                // Dispatch d'un événement personnalisé pour indiquer que la commande a été créée
+                $this->dispatch('orderCreated', [
+                    'orderId' => $order->id,
+                    'orderNumber' => $order->order_number
+                ]);
+
+                // Toast de succès
+                $this->dispatch('showToast', [
+                    'type' => 'success',
+                    'message' => 'Commande passée avec succès ! Redirection en cours...'
+                ]);
+
+                // Flash pour la prochaine page
+                session()->flash('success', 'Votre commande #' . $order->order_number . ' a été enregistrée avec succès !');
+                session()->flash('order_id', $order->id);
+
+                // Redirection avec navigation pour Livewire 3
+                return $this->redirect(
+                    route('orders.show', ['order' => $order->id]),
+                    navigate: true
+                );
+            } catch (\Exception $e) {
+                // Annuler la transaction en cas d'erreur
+                DB::rollBack();
+                throw $e;
             }
-
-            // Vider le panier après validation
-            Cart::clearCart();
-            $this->refreshCart();
-
-            // Toast côté Livewire
-            $this->dispatch('showToast', [
-                'type' => 'success',
-                'message' => 'Commande passée avec succès !'
+        } catch (\Exception $e) {
+            // Log l'erreur pour le débogage
+            \Log::error('Erreur lors du passage de commande: ' . $e->getMessage(), [
+                'user_id' => Auth::id(),
+                'cart_items' => $this->cartItems->toArray(),
+                'trace' => $e->getTraceAsString()
             ]);
 
-            // Flash Laravel
-            session()->flash('success', 'Votre commande a bien été enregistrée !');
-
-            // Redirection Livewire 3
-            return $this->redirectRoute('orders.index', ['order' => $order->id], navigate: true);
-        } catch (\Exception $e) {
             $this->dispatch('showToast', [
                 'type' => 'error',
-                'message' => 'Erreur lors du passage de commande.'
+                'message' => 'Une erreur est survenue lors du passage de commande. Veuillez réessayer.'
             ]);
         }
     }

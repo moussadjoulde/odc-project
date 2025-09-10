@@ -294,7 +294,6 @@
                                     <input type="file" 
                                            name="image" 
                                            id="image" 
-                                           class="file-input @error('image') is-invalid @enderror"
                                            accept="image/*">
                                     @error('image')
                                         <div class="error-message">{{ $message }}</div>

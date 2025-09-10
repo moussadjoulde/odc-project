@@ -267,11 +267,27 @@
                                 </div>
 
                                 <div class="d-grid gap-3">
-                                    <button wire:click="placeOrder" class="btn btn-modern btn-lg rounded-pill">
-                                        <i class="bi bi-credit-card me-2"></i> Passer la commande
+                                    <button wire:click="placeOrder" wire:loading.attr="disabled"
+                                        wire:target="placeOrder"
+                                        class="btn btn-modern btn-lg rounded-pill position-relative">
+
+                                        <!-- État normal -->
+                                        <span wire:loading.remove wire:target="placeOrder">
+                                            <i class="bi bi-credit-card me-2"></i> Passer la commande
+                                        </span>
+
+                                        <!-- État de chargement -->
+                                        <span wire:loading wire:target="placeOrder"
+                                            class="d-flex align-items-center justify-content-center">
+                                            <div class="spinner-border spinner-border-sm me-2" role="status">
+                                                <span class="visually-hidden">Chargement...</span>
+                                            </div>
+                                            Traitement en cours...
+                                        </span>
                                     </button>
 
-                                    <button class="btn btn-outline-primary btn-lg rounded-pill">
+                                    <button class="btn btn-outline-primary btn-lg rounded-pill"
+                                        wire:loading.attr="disabled" wire:target="placeOrder">
                                         <i class="bi bi-paypal me-2"></i>PayPal Express
                                     </button>
                                 </div>
@@ -736,5 +752,128 @@
                 }
             }
         });
+
+        / Écouter l'événement de création de commande
+        Livewire.on('orderCreated', (event) => {
+            console.log('Commande créée:', event.orderId);
+
+            // Animation de succès
+            const checkoutBtn = document.querySelector('[wire\\:click="placeOrder"]');
+            if (checkoutBtn) {
+                checkoutBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Commande validée !';
+                checkoutBtn.classList.add('btn-success');
+                checkoutBtn.classList.remove('btn-modern');
+            }
+
+            // Effet de vidage du panier avec animation
+            const cartItems = document.querySelectorAll('.cart-item');
+            cartItems.forEach((item, index) => {
+                setTimeout(() => {
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateX(-100px)';
+                }, index * 100);
+            });
+
+            // Message de redirection
+            setTimeout(() => {
+                if (typeof showToast === 'function') {
+                    showToast('info', 'Redirection vers votre commande...');
+                }
+            }, 1000);
+        });
+
+        // Écouter les mises à jour du panier
+        Livewire.on('cartUpdated', () => {
+            console.log('Panier mis à jour');
+
+            // Mise à jour de l'indicateur de panier dans la navbar (si vous en avez un)
+            const cartIndicator = document.querySelector('.cart-indicator');
+            if (cartIndicator) {
+                // Animation de pulsation
+                cartIndicator.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    cartIndicator.style.transform = 'scale(1)';
+                }, 200);
+            }
+        });
+
+        // Animation des modifications de quantité
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.quantity-btn')) {
+                const cartItem = e.target.closest('.cart-item');
+                if (cartItem) {
+                    cartItem.style.background = 'rgba(102, 126, 234, 0.1)';
+                    setTimeout(() => {
+                        cartItem.style.background = '';
+                    }, 500);
+                }
+            }
+        });
+
+        // Prévenir les clics multiples sur le bouton de commande
+        let orderInProgress = false;
+        document.addEventListener('click', function(e) {
+        if (e.target.closest('[wire\\:click="placeOrder"]')) {
+            if (orderInProgress) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+            orderInProgress = true;
+
+            // Reset après 10 secondes par sécurité
+            setTimeout(() => {
+                orderInProgress = false;
+            }, 10000);
+        }
+        });
+        });
+
+        // CSS pour les animations de chargement
+        const style = document.createElement('style');
+        style.textContent = `
+    .btn-modern[wire\\:loading\\.attr="disabled"] {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-modern[wire\\:loading\\.attr="disabled"]::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        animation: loading-shine 1.5s infinite;
+    }
+
+    @keyframes loading-shine {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    .cart-item {
+        transition: all 0.5s ease;
+    }
+
+    .btn-success {
+        animation: success-pulse 0.6s ease;
+    }
+
+    @keyframes success-pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    /* Animation de vidage du panier */
+    .emptying-cart .cart-item {
+        opacity: 0;
+        transform: translateX(-100px);
+        transition: all 0.5s ease;
+    }
+`;
+        document.head.appendChild(style);
     </script>
 </div>
