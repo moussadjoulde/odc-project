@@ -68,7 +68,7 @@
             margin-bottom: 1.5rem;
         }
 
-        .form-floating > .form-control {
+        .form-floating>.form-control {
             height: 60px;
             border: 2px solid #e2e8f0;
             border-radius: 12px;
@@ -77,20 +77,20 @@
             background: #fafafa;
         }
 
-        .form-floating > .form-control:focus {
+        .form-floating>.form-control:focus {
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
             background: white;
             transform: translateY(-2px);
         }
 
-        .form-floating > label {
+        .form-floating>label {
             color: #718096;
             font-weight: 600;
         }
 
-        .form-floating > .form-control:focus ~ label,
-        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+        .form-floating>.form-control:focus~label,
+        .form-floating>.form-control:not(:placeholder-shown)~label {
             color: #667eea;
             font-weight: 700;
         }
@@ -110,7 +110,7 @@
             margin-bottom: 1.5rem;
         }
 
-        .textarea-floating > textarea {
+        .textarea-floating>textarea {
             min-height: 120px;
             resize: vertical;
             border: 2px solid #e2e8f0;
@@ -121,14 +121,14 @@
             background: #fafafa;
         }
 
-        .textarea-floating > textarea:focus {
+        .textarea-floating>textarea:focus {
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
             background: white;
             transform: translateY(-2px);
         }
 
-        .textarea-floating > label {
+        .textarea-floating>label {
             position: absolute;
             top: 1rem;
             left: 1rem;
@@ -140,8 +140,8 @@
             pointer-events: none;
         }
 
-        .textarea-floating > textarea:focus ~ label,
-        .textarea-floating > textarea:not(:placeholder-shown) ~ label {
+        .textarea-floating>textarea:focus~label,
+        .textarea-floating>textarea:not(:placeholder-shown)~label {
             top: -0.5rem;
             font-size: 0.875rem;
             color: #667eea;
@@ -263,11 +263,11 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        input:checked + .slider {
+        input:checked+.slider {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
-        input:checked + .slider:before {
+        input:checked+.slider:before {
             transform: translateX(30px);
         }
 
@@ -386,6 +386,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -439,7 +440,8 @@
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
+                    aria-label="Close"></button>
             </div>
         @endif
 
@@ -457,18 +459,15 @@
 
                     <!-- Corps du formulaire -->
                     <div class="form-body">
-                        <form action="{{ route('categories.store') }}" method="POST" enctype="multipart/form-data" id="categoryForm">
+                        <form action="{{ route('categories.store') }}" method="POST" enctype="multipart/form-data"
+                            id="categoryForm">
                             @csrf
-                            
+
                             <!-- Nom de la catégorie -->
                             <div class="form-floating">
-                                <input type="text" 
-                                       class="form-control @error('name') is-invalid @enderror" 
-                                       id="name" 
-                                       name="name" 
-                                       placeholder="Nom de la catégorie"
-                                       value="{{ old('name') }}"
-                                       required>
+                                <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                    id="name" name="name" placeholder="Nom de la catégorie"
+                                    value="{{ old('name') }}" required>
                                 <label for="name">
                                     <i class="bi bi-tag me-2"></i>
                                     Nom de la catégorie
@@ -489,11 +488,8 @@
 
                             <!-- Description -->
                             <div class="textarea-floating">
-                                <textarea class="form-control @error('description') is-invalid @enderror" 
-                                          id="description" 
-                                          name="description" 
-                                          placeholder="Description de la catégorie"
-                                          rows="4">{{ old('description') }}</textarea>
+                                <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description"
+                                    placeholder="Description de la catégorie" rows="4">{{ old('description') }}</textarea>
                                 <label for="description">
                                     <i class="bi bi-card-text me-2"></i>
                                     Description (optionnelle)
@@ -510,11 +506,8 @@
                                     Image de la catégorie (optionnelle)
                                 </label>
                                 <div class="file-input-custom" id="fileInputCustom">
-                                    <input type="file" 
-                                           class="file-input-real @error('image') is-invalid @enderror" 
-                                           id="image" 
-                                           name="image" 
-                                           accept="image/*">
+                                    <input type="file" class="file-input-real @error('image') is-invalid @enderror"
+                                        id="image" name="image" accept="image/*">
                                     <div class="file-input-content">
                                         <div class="file-input-icon">
                                             <i class="bi bi-cloud-upload"></i>
@@ -533,14 +526,9 @@
 
                             <!-- Ordre -->
                             <div class="form-floating">
-                                <input type="number" 
-                                       class="form-control @error('order') is-invalid @enderror" 
-                                       id="order" 
-                                       name="order" 
-                                       placeholder="Ordre d'affichage"
-                                       value="{{ old('order', 0) }}"
-                                       min="0"
-                                       required>
+                                <input type="number" class="form-control @error('order') is-invalid @enderror"
+                                    id="order" name="order" placeholder="Ordre d'affichage"
+                                    value="{{ old('order', 0) }}" min="0" required>
                                 <label for="order">
                                     <i class="bi bi-arrow-up-down me-2"></i>
                                     Ordre d'affichage
@@ -550,6 +538,7 @@
                                 @enderror
                             </div>
 
+                            <!-- Statut actif -->
                             <!-- Statut actif -->
                             <div class="switch-container">
                                 <div>
@@ -562,13 +551,11 @@
                                     </p>
                                 </div>
                                 <label class="switch">
-                                    <!-- Champ caché pour envoyer 0 si la case est décochée -->
+                                    <!-- Champ caché pour envoyer false si décoché -->
                                     <input type="hidden" name="is_active" value="0">
 
-                                    <input type="checkbox" 
-                                           name="is_active" 
-                                           id="is_active" 
-                                           {{ old('is_active', true) ? 'checked' : '' }}>
+                                    <input type="checkbox" name="is_active" id="is_active" value="1"
+                                        {{ old('is_active', true) ? 'checked' : '' }}>
                                     <span class="slider"></span>
                                 </label>
                             </div>
@@ -624,7 +611,7 @@
                     slugInput.value = slug;
                     slugText.textContent = slug || 'slug-auto-genere';
                     slugPreview.style.display = 'block';
-                    
+
                     // Animation
                     slugPreview.style.opacity = '0';
                     setTimeout(() => {
@@ -712,7 +699,7 @@
                             </button>
                         </div>
                     `;
-                    
+
                     // Update file input display
                     fileInputCustom.querySelector('.file-input-content').innerHTML = `
                         <div class="file-input-icon text-success">
@@ -763,7 +750,7 @@
             const form = document.getElementById('categoryForm');
             form.addEventListener('submit', function(e) {
                 let isValid = true;
-                
+
                 // Vérification du nom
                 if (!nameInput.value.trim()) {
                     nameInput.classList.add('is-invalid');
@@ -788,7 +775,10 @@
                     // Scroll vers le premier champ invalide
                     const firstInvalid = document.querySelector('.form-control.is-invalid');
                     if (firstInvalid) {
-                        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        firstInvalid.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
                         firstInvalid.focus();
                     }
                 }

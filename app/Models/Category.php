@@ -35,7 +35,7 @@ class Category extends Model
 
 	protected $casts = [
 		'order' => 'int',
-		'is_active' => 'bool'
+		'is_active' => 'boolean'
 	];
 
 	protected $fillable = [
